@@ -24,7 +24,10 @@ class PostControllerTest {
         // 글 제목
         // 글 내용
 
-        // mockMvc 기본적으로 contentType을 application/json 형태로 보냄
+        // mockMvc 기본적으로 contentType을 application/json 형태로 보
+        // key&value 형태인 application/x-www-urlencorded는 중첩된 데이터 형태를 표현하기 힘듦
+        // ->> application/json을 많이 사용하는 추세
+
         //expected
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
