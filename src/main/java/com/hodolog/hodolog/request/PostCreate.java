@@ -1,25 +1,15 @@
 package com.hodolog.hodolog.request;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
+@Getter
+@Setter
+@ToString
 public class PostCreate {
 
-    public String title;
-    public String content;
+    private String title;
+    private String content;
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    @Override
-    public String toString() {
-        return "PostCreate{" +
-                "title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                '}';
-    }
 }
