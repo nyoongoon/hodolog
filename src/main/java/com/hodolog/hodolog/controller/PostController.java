@@ -24,6 +24,11 @@ public class PostController {
     // 4. 서버 개발자의 편의를 위해서
     @PostMapping("/posts")
     public Map<String, String> post(@RequestBody @Valid PostCreate params, BindingResult result) throws Exception {
+        //이 검증 방식의 문제점
+        //1. 메서드마다 값을 검증 해야함.
+        //2. 응답값에 HashMap -> 응답 클래스를 만드는 것이 좋음
+        //3. 여러개의 에러처리 힘듬
+        //4. 세 번 이상의 반복작업은 피하자..!
         if(result.hasErrors()){
             List<FieldError> fieldErrorList = result.getFieldErrors();
             FieldError firstFieldError = fieldErrorList.get(0);
