@@ -47,7 +47,7 @@ class PostControllerTest {
                         // 제목을 보내지 않는 경우
                         .content("{\"title\": \"\", \"content\": \"내용입니다.\"}"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("Hello World"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("타이틀을 입력해주세요."))
                 .andDo(MockMvcResultHandlers.print());
 
     }
