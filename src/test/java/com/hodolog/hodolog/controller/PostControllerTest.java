@@ -1,9 +1,7 @@
 package com.hodolog.hodolog.controller;
 
 import com.hodolog.hodolog.repository.PostRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,6 +24,11 @@ class PostControllerTest {
 
     @Autowired
     private PostRepository postRepository;
+
+    @BeforeEach
+    void clean(){
+        postRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("/posts 요청 시 Hello World를 출력한다.")
