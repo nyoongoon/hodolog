@@ -1,7 +1,9 @@
 package com.hodolog.hodolog.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hodolog.hodolog.domain.Post;
 import com.hodolog.hodolog.repository.PostRepository;
+import com.hodolog.hodolog.request.PostCreate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +26,9 @@ class PostControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
     private PostRepository postRepository;
 
     @BeforeEach
@@ -34,17 +39,18 @@ class PostControllerTest {
     @Test
     @DisplayName("/posts 요청 시 Hello World를 출력한다.")
     void test() throws Exception {
-        // 글 제목
-        // 글 내용
-
-        // mockMvc 기본적으로 contentType을 application/json 형태로 보
-        // key&value 형태인 application/x-www-urlencorded는 중첩된 데이터 형태를 표현하기 힘듦
-        // ->> application/json을 많이 사용하는 추세
+        //given
+        PostCreate request = PostCreate.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+        String json = objectMapper.writeValueAsString(request);
 
         //expected
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\": \"제목입니다.\", \"content\": \"내용입니다.\"}"))
+                        // 개발자가 매우 읽기 힘든 형태
+                        .content(json))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("{}"))
                 .andDo(MockMvcResultHandlers.print());
@@ -54,11 +60,16 @@ class PostControllerTest {
     @Test
     @DisplayName("/posts 요청시 title 값은 필수다.")
     void test2() throws Exception {
+        //given
+        PostCreate request = PostCreate.builder()
+                .content("내용입니다.")
+                .build();
+        String json = objectMapper.writeValueAsString(request);
         //expected
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
                         .contentType(MediaType.APPLICATION_JSON)
                         // 제목을 보내지 않는 경우
-                        .content("{\"title\": null, \"content\": \"내용입니다.\"}"))
+                        .content(json))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("400"))
                 .andExpect(MockMvcResultMatchers
@@ -71,11 +82,17 @@ class PostControllerTest {
     @Test
     @DisplayName("/posts 요청시 DB에 값이 저장된다.")
     void test3() throws Exception {
+        // given
+        PostCreate request = PostCreate.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+        String json = objectMapper.writeValueAsString(request);
         // when
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
                         .contentType(MediaType.APPLICATION_JSON)
                         // 제목을 보내지 않는 경우
-                        .content("{\"title\": \"제목입니다.\", \"content\": \"내용입니다.\"}"))
+                        .content(json))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
         // then
