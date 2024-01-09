@@ -1,5 +1,6 @@
 package com.hodolog.hodolog.controller;
 
+import com.hodolog.hodolog.domain.Post;
 import com.hodolog.hodolog.request.PostCreate;
 import com.hodolog.hodolog.service.PostService;
 import jakarta.validation.Valid;
@@ -21,14 +22,14 @@ import java.util.Map;
 public class PostController {
 
     private final PostService postService;
-    // 데이터 검증하기 -> 데이터 검증하는 이유
-    // 1. client 버그
-    // 2. 보안
-    // 3. db에 값 저장할 때 에러 발생 가능
-    // 4. 서버 개발자의 편의를 위해서
+
     @PostMapping("/posts")
-    public Map<String, String> post(@RequestBody @Valid PostCreate request) throws Exception {
+    public void post(@RequestBody @Valid PostCreate request) throws Exception {
+        // 리턴값 내려주는 경우
+        // Case1. 저장한 데이터 Entity -> response로 응답하기
+        // Case2. 저장한 데이터의 primary_id -> reponse로 응답하기
+                    // Client에서는 수신한 id를 글 조회 API를 통해서 데이터 수신받음
+        // Case3. 응답 필요 없음 -> 클라이언트에서 모든 POST 데이터 context를 잘 관리함
         postService.write(request);
-        return Map.of();
     }
 }

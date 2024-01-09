@@ -52,7 +52,7 @@ class PostControllerTest {
                         // 개발자가 매우 읽기 힘든 형태
                         .content(json))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("{}"))
+                .andExpect(MockMvcResultMatchers.content().string(""))
                 .andDo(MockMvcResultHandlers.print());
         //
     }
