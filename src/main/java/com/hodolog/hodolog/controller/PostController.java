@@ -34,6 +34,8 @@ public class PostController {
 
     @GetMapping("/posts/{postId}")
     public PostResponse get(@PathVariable(name = "postId") Long id){
+        // 요청 클래스 -> 요청 + 밸리데이션 정책
+        // 응답 클래스 -> 응답 + 서비스 정책 일부
         PostResponse response = postService.get(id);
 
         return response;
