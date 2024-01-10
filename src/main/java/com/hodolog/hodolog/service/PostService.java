@@ -30,12 +30,11 @@ public class PostService {
         // 엔티티 -> 응답 클래스 분리 작업을 이곳(서비스)에서 하는 것이 맞을까??
         // 서비스 계층을 2가지로 분리하는 것도 좋은 방법
 
-        PostResponse response = PostResponse.builder()
+        return PostResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .build();
-        return response;
     }
 
 

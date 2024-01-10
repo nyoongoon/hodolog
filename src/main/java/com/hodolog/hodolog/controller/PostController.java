@@ -1,19 +1,15 @@
 package com.hodolog.hodolog.controller;
 
-import com.hodolog.hodolog.domain.Post;
 import com.hodolog.hodolog.request.PostCreate;
 import com.hodolog.hodolog.response.PostResponse;
 import com.hodolog.hodolog.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -33,11 +29,9 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}")
-    public PostResponse get(@PathVariable(name = "postId") Long id){
+    public PostResponse get(Long postId){
         // 요청 클래스 -> 요청 + 밸리데이션 정책
         // 응답 클래스 -> 응답 + 서비스 정책 일부
-        PostResponse response = postService.get(id);
-
-        return response;
+        return postService.get(postId);
     }
 }
