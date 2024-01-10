@@ -2,6 +2,7 @@ package com.hodolog.hodolog.controller;
 
 import com.hodolog.hodolog.domain.Post;
 import com.hodolog.hodolog.request.PostCreate;
+import com.hodolog.hodolog.response.PostResponse;
 import com.hodolog.hodolog.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,9 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}")
-    public Post get(@PathVariable(name = "postId") Long id){
-        Post post = postService.get(id);
-        return post;
+    public PostResponse get(@PathVariable(name = "postId") Long id){
+        PostResponse response = postService.get(id);
+
+        return response;
     }
 }

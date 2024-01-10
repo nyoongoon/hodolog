@@ -24,4 +24,6 @@ public class Post {
         this.title = title;
         this.content = content;
     }
+
+    // TODO 엔티티의 GETTER에는 서비스의 정책을 절대 넣지 말 것! -> 응답 클래스 분리
 }
