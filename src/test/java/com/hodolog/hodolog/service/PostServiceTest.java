@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 @SpringBootTest
 class PostServiceTest {
     @Autowired
@@ -60,5 +62,27 @@ class PostServiceTest {
         Assertions.assertNotNull(response);
         Assertions.assertEquals("foo", response.getTitle());
         Assertions.assertEquals("bar", response.getContent());
+    }
+
+    @Test
+    @DisplayName("글 여러개 조회")
+    void test3() {
+        // given
+        Post requesetPost1 = Post.builder()
+                .title("foo1")
+                .content("bar1")
+                .build();
+        postRepository.save(requesetPost1);
+        Post requesetPost2 = Post.builder()
+                .title("foo2")
+                .content("bar2")
+                .build();
+        postRepository.save(requesetPost2);
+
+        // when
+        List<PostResponse> posts =  postService.getList();
+
+        // then
+        Assertions.assertEquals(2, posts.size());
     }
 }

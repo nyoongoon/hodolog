@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hodolog.hodolog.domain.Post;
 import com.hodolog.hodolog.repository.PostRepository;
 import com.hodolog.hodolog.request.PostCreate;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -112,6 +113,7 @@ class PostControllerTest {
                 .build();
         postRepository.save(post);
 
+
         //expected (when+then)
         mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", post.getId())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -120,6 +122,34 @@ class PostControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("foo"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content").value("bar"))
                 .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("글 여러개 조회")
+    void test5() throws Exception {
+        //given
+        Post post1 = Post.builder()
+                .title("foo1")
+                .content("bar1")
+                .build();
+        postRepository.save(post1);
+        Post post2 = Post.builder()
+                .title("foo2")
+                .content("bar2")
+                .build();
+        postRepository.save(post2);
+
+        //expected (when+then)
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                //TODO json List 경우 다른 방식으로 조회해야함
+                .andExpect(MockMvcResultMatchers.jsonPath("$.length()", Matchers.is(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(post1.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("title_1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("content_1"))
+                .andDo(MockMvcResultHandlers.print());
+
 
     }
 }
