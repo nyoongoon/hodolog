@@ -116,7 +116,7 @@ class PostControllerTest {
 
         //expected (when+then)
         mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", post.getId())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(post.getId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("foo"))
@@ -128,16 +128,14 @@ class PostControllerTest {
     @DisplayName("글 여러개 조회")
     void test5() throws Exception {
         //given
-        Post post1 = Post.builder()
+        Post post1 = postRepository.save(Post.builder()
                 .title("foo1")
                 .content("bar1")
-                .build();
-        postRepository.save(post1);
-        Post post2 = Post.builder()
+                .build());
+        Post post2 = postRepository.save(Post.builder()
                 .title("foo2")
                 .content("bar2")
-                .build();
-        postRepository.save(post2);
+                .build());
 
         //expected (when+then)
         mockMvc.perform(MockMvcRequestBuilders.get("/posts")
@@ -148,6 +146,9 @@ class PostControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(post1.getId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("title_1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("content_1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(post2.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].title").value("title_2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].content").value("content_2"))
                 .andDo(MockMvcResultHandlers.print());
 
 
