@@ -7,8 +7,8 @@ spring:
   data:
     web:
       pageable:
-        # @PageableDefault Pageable 에 대해서 작동
-        one-indexed-parameters: true
+        one-indexed-parameters: true # @PageableDefault Pageable 에 대해서 작동
+        default-page-size: 5
   datasource:
     url: jdbc:h2:mem:hodolog
     username: sa

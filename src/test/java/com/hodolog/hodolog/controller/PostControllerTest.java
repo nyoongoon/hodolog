@@ -141,7 +141,7 @@ class PostControllerTest {
         postRepository.saveAll(requestPosts);
 
         //expected (when+then)
-        mockMvc.perform(MockMvcRequestBuilders.get("/posts/page=1&sort=id,desc")
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts?page=1&sort=id,desc&size=5")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 //TODO json List 경우 다른 방식으로 조회해야함
