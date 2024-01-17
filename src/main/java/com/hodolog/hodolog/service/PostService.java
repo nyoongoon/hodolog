@@ -6,6 +6,9 @@ import com.hodolog.hodolog.request.PostCreate;
 import com.hodolog.hodolog.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,9 +43,11 @@ public class PostService {
                 .build();
     }
 
+    // 문제점 -> 글이 너무 많은 경우 -> 비용이 많이 든다
+    // 글이 1억개 -> DB글을 모두 조회하는 경우 -> DB가 뻗을 수도 있음
 
-    public List<PostResponse> getList() {
-        return postRepository.findAll().stream()
+    public List<PostResponse> getList(Pageable pageable) {
+        return postRepository.findAll(pageable).stream()
                 .map(PostResponse::new)
                 .collect(Collectors.toList());
     }

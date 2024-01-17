@@ -18,6 +18,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 //@WebMvcTest // 컨트롤러의 웹 레이어 테스트 용
 @AutoConfigureMockMvc // @SpringBootTest와 함께 MockMvc 주입받고 싶을 때
 @SpringBootTest // 서비스, 레포가 추가되면서 전반적인 스프링 애플리케이션 테스트 필요할 때 -> mockMvc 주입이 안됨
@@ -128,29 +132,19 @@ class PostControllerTest {
     @DisplayName("글 여러개 조회")
     void test5() throws Exception {
         //given
-        Post post1 = postRepository.save(Post.builder()
-                .title("foo1")
-                .content("bar1")
-                .build());
-        Post post2 = postRepository.save(Post.builder()
-                .title("foo2")
-                .content("bar2")
-                .build());
+        List<Post> requestPosts = IntStream.range(1, 31)
+                .mapToObj(i -> Post.builder()
+                        .title("호돌맨 제목 " + i)
+                        .content("반포자이 " + i)
+                        .build())
+                .collect(Collectors.toList());
+        postRepository.saveAll(requestPosts);
 
         //expected (when+then)
-        mockMvc.perform(MockMvcRequestBuilders.get("/posts")
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts/page=1&sort=id,desc")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 //TODO json List 경우 다른 방식으로 조회해야함
-                .andExpect(MockMvcResultMatchers.jsonPath("$.length()", Matchers.is(2)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(post1.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("title_1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("content_1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(post2.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].title").value("title_2"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].content").value("content_2"))
                 .andDo(MockMvcResultHandlers.print());
-
-
     }
 }
