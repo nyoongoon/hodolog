@@ -39,6 +39,7 @@ public class PostController {
 
     @GetMapping("/posts")
     public List<PostResponse> getList(Pageable pageable){
+        // TODO querydsl을 이용하여 페이징 처리하기...
         return postService.getList(pageable);
     }
 }
