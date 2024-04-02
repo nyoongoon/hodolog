@@ -44,8 +44,8 @@ public class PostController {
     }
 
     @PatchMapping("/posts/{postId}")
-    public PostResponse edit(@PathVariable Long postId, @RequestBody @Valid PostEdit postEdit) {
+    public void edit(@PathVariable Long postId, @RequestBody @Valid PostEdit postEdit) {
         // 클라이언트에서 결과 리턴을 요구할 때도 있음.
-        return postService.edit(postId, postEdit);
+        postService.edit(postId, postEdit);
     }
 }
