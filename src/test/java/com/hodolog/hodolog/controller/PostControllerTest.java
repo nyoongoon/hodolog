@@ -131,7 +131,7 @@ class PostControllerTest {
     @DisplayName("글 여러개 조회")
     void test5() throws Exception {
         //given
-        List<Post> requestPosts = IntStream.range(0, 10)
+        List<Post> requestPosts = IntStream.range(0, 20)
                 .mapToObj(i -> Post.builder()
                         .title("foo" + i)
                         .content("bar" + i)
@@ -143,9 +143,31 @@ class PostControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/posts?page=1&size=10")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.length()", Matchers.is(5)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("foo0"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("bar0"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.length()", Matchers.is(10)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("foo19"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("bar19"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("페이지를 0으로 요청하면 첫페이지를 가져온다")  // -> offset(Math.min(1, x)) 활용
+    void test6() throws Exception {
+        //given
+        List<Post> requestPosts = IntStream.range(0, 20)
+                .mapToObj(i -> Post.builder()
+                        .title("foo" + i)
+                        .content("bar" + i)
+                        .build())
+                .collect(Collectors.toList());
+        postRepository.saveAll(requestPosts);
+
+        //expected (when+then)
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts?page=0&size=10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.length()", Matchers.is(10)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("foo19"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("bar19"))
                 .andDo(MockMvcResultHandlers.print());
     }
 }
