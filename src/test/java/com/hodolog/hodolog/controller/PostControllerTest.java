@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hodolog.hodolog.domain.Post;
 import com.hodolog.hodolog.repository.PostRepository;
 import com.hodolog.hodolog.request.PostCreate;
+import com.hodolog.hodolog.request.PostEdit;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -150,7 +151,8 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("페이지를 0으로 요청하면 첫페이지를 가져온다")  // -> offset(Math.min(1, x)) 활용
+    @DisplayName("페이지를 0으로 요청하면 첫페이지를 가져온다")
+        // -> offset(Math.min(1, x)) 활용
     void test6() throws Exception {
         //given
         List<Post> requestPosts = IntStream.range(0, 20)
@@ -169,5 +171,30 @@ class PostControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("foo19"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("bar19"))
                 .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("글 제목 수정")
+    void test7() throws Exception {
+        //given
+        Post post = Post.builder()
+                .title("호돌맨")
+                .content("반포자이")
+                .build();
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("호돌걸")
+                .content("반포자이")
+                .build();
+
+        //expected (when+then)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/posts/{postId}", post.getId()) //PATCH /posts/{postId}
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit))
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+
     }
 }
