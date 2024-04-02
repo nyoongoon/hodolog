@@ -1,6 +1,7 @@
 package com.hodolog.hodolog.service;
 
 import com.hodolog.hodolog.domain.Post;
+import com.hodolog.hodolog.domain.PostEditor;
 import com.hodolog.hodolog.repository.PostRepository;
 import com.hodolog.hodolog.request.PostCreate;
 import com.hodolog.hodolog.request.PostEdit;
@@ -8,9 +9,6 @@ import com.hodolog.hodolog.request.PostSearch;
 import com.hodolog.hodolog.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,10 +54,16 @@ public class PostService {
     }
 
     @Transactional
-    public void edit(Long id, PostEdit postEdit){
+    public void edit(Long id, PostEdit postEdit) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다"));
 
-        post.change(postEdit.getTitle(), postEdit.getContent());
+//        post.change(postEdit.getTitle(), postEdit.getContent());
+        PostEditor.PostEditorBuilder editorBuilder = post.toEditor(); // 엔티티에서 빌더를 받아서 빌더를 빌드한 후 edit() 메소드에 넣기
+        PostEditor postEditor = editorBuilder.title(postEdit.getTitle())
+                .content(postEdit.getContent())
+                .build();
+        post.edit(postEditor);
+
     }
 }

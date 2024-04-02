@@ -25,8 +25,20 @@ public class Post {
         this.content = content;
     }
 
-    public void change(String title, String content) {
-        this.title = title;
-        this.content = content;
+    public PostEditor.PostEditorBuilder toEditor(){ // 빌더를 리턴
+        return PostEditor.builder()
+                .title(title)
+                .content(content);
     }
+
+    public void edit(PostEditor postEditor){
+        this.title = postEditor.getTitle();
+        this.content = postEditor.getContent();
+    }
+
+    // parameter 순서, 개수 관리가 어려워질수 있음 -> toEditor() & edit() 로 변경
+//    public void change(String title, String content) {
+//        this.title = title;
+//        this.content = content;
+//    }
 }

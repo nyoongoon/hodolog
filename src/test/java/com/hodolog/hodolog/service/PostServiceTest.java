@@ -111,6 +111,6 @@ class PostServiceTest {
                 .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다"));
 
         assertEquals("호돌걸", changedPost.getTitle());
-
+        assertEquals("반포자이", changedPost.getContent());
     }
 }
