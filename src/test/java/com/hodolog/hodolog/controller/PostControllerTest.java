@@ -119,8 +119,7 @@ class PostControllerTest {
 
 
         //expected (when+then)
-        mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", post.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(MockMvcRequestBuilders.get("/post   s/{postId}", post.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(post.getId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("foo"))
