@@ -37,7 +37,8 @@ public class PostController {
     }
 
     @GetMapping("/posts") // querydsl을 이용하여 페이징 처리하기...
-    public List<PostResponse> getList(@RequestParam PostSearch pageable){
+    //@ModalAttribute -> 쿼리파라미터로 던저도 dto로 받는다.
+    public List<PostResponse> getList(@ModelAttribute PostSearch pageable){
 
         return postService.getList(pageable);
     }

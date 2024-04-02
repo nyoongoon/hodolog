@@ -3,6 +3,7 @@ package com.hodolog.hodolog.service;
 import com.hodolog.hodolog.domain.Post;
 import com.hodolog.hodolog.repository.PostRepository;
 import com.hodolog.hodolog.request.PostCreate;
+import com.hodolog.hodolog.request.PostSearch;
 import com.hodolog.hodolog.response.PostResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,9 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,9 +79,12 @@ class PostServiceTest {
                 .collect(Collectors.toList());
         postRepository.saveAll(requestPosts);
 
-        Pageable pageable = PageRequest.of(0, 5);
+        PostSearch postSearch = PostSearch.builder()
+                .page(1)
+                .build();
+
         // when
-        List<PostResponse> posts = postService.getList(pageable);
+        List<PostResponse> posts = postService.getList(postSearch);
         // then
         Assertions.assertEquals(10L, posts.size());
         Assertions.assertEquals("foo19", posts.get(0).getTitle()); // 리스트의 첫번쨰 요소가 마지막글
