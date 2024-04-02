@@ -3,6 +3,7 @@ package com.hodolog.hodolog.service;
 import com.hodolog.hodolog.domain.Post;
 import com.hodolog.hodolog.repository.PostRepository;
 import com.hodolog.hodolog.request.PostCreate;
+import com.hodolog.hodolog.request.PostSearch;
 import com.hodolog.hodolog.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,10 +45,10 @@ public class PostService {
     }
 
     // 문제점 -> 글이 너무 많은 경우 -> 비용이 많이 든다
-    // 글이 1억개 -> DB글을 모두 조회하는 경우 -> DB가 뻗을 수도 있음
-
-    public List<PostResponse> getList(Pageable pageable) {
-        return postRepository.findAll(pageable).stream()
+    // 글이 1억개 -> DB글을 모두 조회하는 경우 -> DB가 뻗을 수도 있음 -> 페이징
+    // 커스텀 요청 DTO를 통해 추후 정렬 등의 기능도 담을 수 있도록 만든다
+    public List<PostResponse> getList(PostSearch postSearch) {
+        return postRepository.getList(1).stream()
                 .map(PostResponse::new)
                 .collect(Collectors.toList());
     }

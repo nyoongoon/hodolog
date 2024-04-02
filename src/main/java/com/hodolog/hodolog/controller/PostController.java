@@ -1,14 +1,13 @@
 package com.hodolog.hodolog.controller;
 
-import com.hodolog.hodolog.domain.Post;
 import com.hodolog.hodolog.request.PostCreate;
+import com.hodolog.hodolog.request.PostSearch;
 import com.hodolog.hodolog.response.PostResponse;
 import com.hodolog.hodolog.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,9 +36,9 @@ public class PostController {
         return postService.get(postId);
     }
 
-    @GetMapping("/posts")
-    public List<PostResponse> getList(Pageable pageable){
-        // TODO querydsl을 이용하여 페이징 처리하기...
+    @GetMapping("/posts") // querydsl을 이용하여 페이징 처리하기...
+    public List<PostResponse> getList(@RequestParam PostSearch pageable){
+
         return postService.getList(pageable);
     }
 }
