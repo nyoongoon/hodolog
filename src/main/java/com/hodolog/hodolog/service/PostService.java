@@ -60,14 +60,10 @@ public class PostService {
 
 //        post.change(postEdit.getTitle(), postEdit.getContent());
         PostEditor.PostEditorBuilder editorBuilder = post.toEditor(); // 엔티티에서 빌더를 받아서 빌더를 빌드한 후 edit() 메소드에 넣기
-        // null 체크 후 빌더 각각 추가 방식
-        if(postEdit.getTitle() != null){
-            editorBuilder.title(postEdit.getTitle());
-        }
-        if(postEdit.getContent() != null){
-            editorBuilder.content(postEdit.getContent());
-        }
-        post.edit(editorBuilder.build());
+        PostEditor postEditor = editorBuilder.title(postEdit.getTitle())
+                .content(postEdit.getContent())
+                .build();
+        post.edit(postEditor);
 
     }
 }

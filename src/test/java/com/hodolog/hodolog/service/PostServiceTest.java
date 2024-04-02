@@ -103,6 +103,7 @@ class PostServiceTest {
 
         PostEdit postEdit = PostEdit.builder()
                 .title("호돌걸")
+                .content("반포자이")
                 .build();
         // when
         postService.edit(post.getId(), postEdit);
