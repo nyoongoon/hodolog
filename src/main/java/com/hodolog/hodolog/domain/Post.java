@@ -25,6 +25,7 @@ public class Post {
         this.content = content;
     }
 
+    // 에디터의 개념을 꼭 사용하지 않아도 된다 .
     public PostEditor.PostEditorBuilder toEditor(){ // 빌더를 리턴
         return PostEditor.builder()
                 .title(title)
