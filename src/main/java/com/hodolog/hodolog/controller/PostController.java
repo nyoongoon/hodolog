@@ -48,4 +48,9 @@ public class PostController {
         // 클라이언트에서 결과 리턴을 요구할 때도 있음.
         postService.edit(postId, postEdit);
     }
+
+    @DeleteMapping("/posts/{postId}")
+    public void delete(@PathVariable Long postId) {
+
+    }
 }
