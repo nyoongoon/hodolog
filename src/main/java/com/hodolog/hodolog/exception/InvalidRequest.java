@@ -12,7 +12,7 @@ public class InvalidRequest extends HodologException {
 
     public InvalidRequest(String fieldName, String message) {
         super(MESSAGE);
-        addValidation(fieldName, message);
+        addValidation(fieldName, message); // 예외 발생한 필드 정보 담아주기..
     }
 
     @Override

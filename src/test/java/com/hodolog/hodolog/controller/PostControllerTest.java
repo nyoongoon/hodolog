@@ -270,4 +270,12 @@ class PostControllerTest {
         // then
     }
 
+    /**
+     * 섹션2 - 문서화
+     * API 문서 생성
+     *
+     * String RestDocs
+     * - 운영코드에 영향X
+     * - 테스트 케이스 통과해야 문서 생성해주므로 문서 최신화가 강제
+     */
 }
