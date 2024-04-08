@@ -214,4 +214,19 @@ class PostControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    @DisplayName("존재하지 않는 게시글 조회")
+    void test9() throws Exception {
+        //expected (when+then)
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+        // 커스텀 예외를 서비스에 추가하고, 컨트롤러에서 추가 작업을 하지 않는 경우,
+        // -> PostNotFound 예외가 발생하면서 서버오류가 발생하긴 하나
+        // 예상하는 Http 응답값을 받을 수가 없음 !
+    }
+
 }
