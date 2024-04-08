@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Slf4j
 @ControllerAdvice
-@ResponseBody // return data를 jsom으로 변환.;
+@ResponseBody // return data를 json으로 변환
 public class ExceptionController {
-
+    // status code는 @ResponseStatus(HttpStatus.NOT_FOUND) 로 설정 & 나머지 json 형태의 코드와 메시지는 바디에 담아서 보냄..!
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse invalidRequestHandler(MethodArgumentNotValidException e) {

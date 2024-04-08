@@ -1,5 +1,6 @@
 package com.hodolog.hodolog.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.Map;
  * }
  */
 @Getter
+@JsonInclude(value = JsonInclude.Include.NON_EMPTY) //응답 내려줄 떄 비어있는 필드는 없애고 json 변환시킴!
 public class ErrorResponse {
     private final String code;
     private final String message;
