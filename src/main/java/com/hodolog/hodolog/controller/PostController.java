@@ -29,9 +29,12 @@ public class PostController {
         // Case3. 응답 필요 없음 -> 클라이언트에서 모든 POST 데이터 context를 잘 관리함
 
         // 디테일한 검증이 필요한 경우
-        if (request.getTitle().contains("바보")) {
-            throw new InvalidRequest();
-        }
+//        if (request.getTitle().contains("바보")) {
+//            throw new InvalidRequest();
+//        }
+        // 하지만 위처럼 메시지를 가져와서 가공하는 등의 작업은 지양하기 -> **메시지를 던지는 방향으로** 리팩토링!
+        request.validate(); // 검증 방식 주의 -> 가져오지 말고 던지기 !!!ㅎ
+
         postService.write(request);
     }
 
