@@ -218,18 +218,56 @@ class PostControllerTest {
     @Test
     @DisplayName("존재하지 않는 게시글 조회")
     void test9() throws Exception {
-        //expected (when+then)
-        mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(MockMvcResultMatchers.status().isNotFound()) // status code는 @ResponseStatus(HttpStatus.NOT_FOUND) 로 설정 & 나머지 json 형태의 코드와 메시지는 바디에 담아서 보냄..!
-                .andDo(MockMvcResultHandlers.print());
         // 커스텀 예외를 서비스에 추가하고, 컨트롤러에서 추가 작업을 하지 않는 경우,
         // -> PostNotFound 예외가 발생하면서 서버오류가 발생하긴 하나
         // 예상하는 Http 응답값을 받을 수가 없음 !
 
         // ExceptionController에서 처리한 것처럼 json 형태로 코드와 메시지가 내려올 것을 기대
         // -> 정형화된 데이터 내려주는 것으로 변경 필요
+
+        //expected (when+then)
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isNotFound()) // status code는 @ResponseStatus(HttpStatus.NOT_FOUND) 로 설정 & 나머지 json 형태의 코드와 메시지는 바디에 담아서 보냄..!
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 게시글 수정")
+    void test10() throws Exception {
+        // given
+        PostEdit postEdit = PostEdit.builder()
+                .title("호돌걸")
+                .content("반포자이")
+                .build();
+
+        //expected (when+then)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit))
+                )
+                .andExpect(MockMvcResultMatchers.status().isNotFound()) // status code는 @ResponseStatus(HttpStatus.NOT_FOUND) 로 설정 & 나머지 json 형태의 코드와 메시지는 바디에 담아서 보냄..!
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("게시글 작성 시 제목에 '바보'는 포함될 수 없다 ")
+    void test1() throws Exception {
+        // given
+        PostCreate request = PostCreate.builder()
+                .title("나는 바보입니다.")
+                .content("반포자이")
+                .build();
+        String json = objectMapper.writeValueAsString(request);
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        // 제목을 보내지 않는 경우
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print());
+        // then
     }
 
 }

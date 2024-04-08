@@ -1,5 +1,6 @@
 package com.hodolog.hodolog.controller;
 
+import com.hodolog.hodolog.exception.InvalidRequest;
 import com.hodolog.hodolog.request.PostCreate;
 import com.hodolog.hodolog.request.PostEdit;
 import com.hodolog.hodolog.request.PostSearch;
@@ -26,6 +27,11 @@ public class PostController {
         // Case2. 저장한 데이터의 primary_id -> reponse로 응답하기
         // Client에서는 수신한 id를 글 조회 API를 통해서 데이터 수신받음
         // Case3. 응답 필요 없음 -> 클라이언트에서 모든 POST 데이터 context를 잘 관리함
+
+        // 디테일한 검증이 필요한 경우
+        if (request.getTitle().contains("바보")) {
+            throw new InvalidRequest();
+        }
         postService.write(request);
     }
 
