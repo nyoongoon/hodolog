@@ -1,6 +1,7 @@
 package com.hodolog.hodolog.service;
 
 import com.hodolog.hodolog.domain.Post;
+import com.hodolog.hodolog.exception.PostNotFound;
 import com.hodolog.hodolog.repository.PostRepository;
 import com.hodolog.hodolog.request.PostCreate;
 import com.hodolog.hodolog.request.PostEdit;
@@ -164,13 +165,15 @@ class PostServiceTest {
         postRepository.save(post);
 
         // expected
-        assertThrows(IllegalArgumentException.class, ()-> {
-            PostResponse response = postService.get(post.getId() + 1L);
+        // IllegalArgumentException는 자바에서 제공하는 기본 예외이기 때문에 비즈니스를 명확히 표현해줄 수 없다. -> 커스텀 예외 만들기
+//        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+//            postService.get(post.getId() + 1L);
+//        });
+//        // IllegalArgumentException 다른 로직에서도 사용되는 예외이기 때문에 해당 로직의 에러 메시지까지 하드코딩으로 검증했어야함 -> 커스텀 예외로 교체!
+//        Assertions.assertEquals("존재하지 않는 글입니다.", e.getMessage());
+        assertThrows(PostNotFound.class, ()->{
+            postService.get(post.getId() + 1L);
         });
-
-
-
-
 
     }
 }

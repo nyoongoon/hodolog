@@ -2,6 +2,7 @@ package com.hodolog.hodolog.service;
 
 import com.hodolog.hodolog.domain.Post;
 import com.hodolog.hodolog.domain.PostEditor;
+import com.hodolog.hodolog.exception.PostNotFound;
 import com.hodolog.hodolog.repository.PostRepository;
 import com.hodolog.hodolog.request.PostCreate;
 import com.hodolog.hodolog.request.PostEdit;
@@ -32,7 +33,9 @@ public class PostService {
 
     public PostResponse get(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다.")); // -> 커스텀 예외로 교체
+
         // 응답 클래스 분리
         // 엔티티 -> 응답 클래스 분리 작업을 이곳(서비스)에서 하는 것이 맞을까??
         // 서비스 계층을 2가지로 분리하는 것도 좋은 방법
