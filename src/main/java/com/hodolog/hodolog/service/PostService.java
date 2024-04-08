@@ -59,7 +59,7 @@ public class PostService {
     @Transactional
     public void edit(Long id, PostEdit postEdit) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다"));
+                .orElseThrow(PostNotFound::new);
 
 //        post.change(postEdit.getTitle(), postEdit.getContent());
         PostEditor.PostEditorBuilder editorBuilder = post.toEditor(); // 엔티티에서 빌더를 받아서 빌더를 빌드한 후 edit() 메소드에 넣기
@@ -72,7 +72,7 @@ public class PostService {
 
     public void delete(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다"));
+                .orElseThrow(PostNotFound::new);
         postRepository.delete(post);
 
     }
