@@ -32,7 +32,7 @@ public class PostCreate {
     // 메시지를 전달해서 (validate()호출) 처리하는 것을 지향하자!
     public void validate(){
         if (this.getTitle().contains("바보")) {
-            throw new InvalidRequest();
+            throw new InvalidRequest("title", "제목에 바보를 포함할 수 없습니다.");
         }
     }
 }
