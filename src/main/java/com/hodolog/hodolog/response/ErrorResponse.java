@@ -22,7 +22,7 @@ import java.util.Map;
 public class ErrorResponse {
     private final String code;
     private final String message;
-    private final Map<String, String> validation;
+    private Map<String, String> validation = new HashMap<>();
 
     @Builder
     public ErrorResponse(String code, String message, Map<String, String> validation) {

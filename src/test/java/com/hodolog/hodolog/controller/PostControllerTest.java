@@ -120,7 +120,7 @@ class PostControllerTest {
 
 
         //expected (when+then)
-        mockMvc.perform(MockMvcRequestBuilders.get("/post   s/{postId}", post.getId()))
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", post.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(post.getId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("foo"))
@@ -277,5 +277,7 @@ class PostControllerTest {
      * String RestDocs
      * - 운영코드에 영향X
      * - 테스트 케이스 통과해야 문서 생성해주므로 문서 최신화가 강제
+     *
+     * - restdoc gradle 설정 중...
      */
 }

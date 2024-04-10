@@ -1,9 +1,6 @@
 package com.hodolog.hodolog.request;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
@@ -13,8 +10,9 @@ import javax.validation.constraints.NotBlank;
  * 기능이 다르므로 추후 차이점이 생길 가능성이 매우 높으므로
  */
 @Getter
-@Setter
-@ToString
+//@Setter
+//@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostEdit {
 
     @NotBlank(message = "타이틀을 입력해주세요.")

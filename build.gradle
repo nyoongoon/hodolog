@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.5.9'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2' //restdoc
 }
 
 group = 'com.hodolog'
@@ -15,6 +16,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExt // restdoc
 }
 
 repositories {
@@ -29,11 +31,13 @@ dependencies {
     // Spring Boot 2.x QueryDsl
     implementation 'com.querydsl:querydsl-core'
     implementation 'com.querydsl:querydsl-jpa'
-
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
     annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
 
+    //restdoc
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.6.RELEASE'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc:2.0.6.RELEASE'
 
 //    // ⭐ Spring boot 3.x이상에서 QueryDsl 패키지를 정의하는 방법
 //    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
@@ -52,6 +56,32 @@ dependencies {
 
 }
 
+
+ext {
+    //restdoc
+    snippetsDir = file('build/generated-snippets')
+}
+
+
+test {
+    //restdoc
+    outputs.dir snippetsDir
+}
+
+asciidoctor {
+    //restdoc
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    dependsOn test
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+}
+bootJar {
+    dependsOn asciidoctor
+    copy {
+        from asciidoctor.outputDir
+        into "src/main/resources/static/docs"
+    }
 }

@@ -89,7 +89,7 @@ class PostServiceTest {
         // when
         List<PostResponse> posts = postService.getList(postSearch);
         // then
-        assertEquals(10L, posts.size());
+        assertEquals(20L, posts.size());
         assertEquals("foo19", posts.get(0).getTitle()); // 리스트의 첫번쨰 요소가 마지막글
     }
 

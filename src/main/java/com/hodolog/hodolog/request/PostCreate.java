@@ -1,16 +1,14 @@
 package com.hodolog.hodolog.request;
 
 import com.hodolog.hodolog.exception.InvalidRequest;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
 @Getter
-@Setter
-@ToString
+//@Setter // 불필요 --> 기본 생성자를 통해 @RequestBody를 바인딩..?
+//@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostCreate {
 
     @NotBlank(message = "타이틀을 입력해주세요.")
