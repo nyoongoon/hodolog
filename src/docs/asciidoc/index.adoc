@@ -1,5 +1,10 @@
 = 호돌로그 API
-:toc:
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
 
 == 글 단건 조회
 === 요청
