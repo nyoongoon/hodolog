@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import axios from "axios"
+import {useRouter} from "vue-router";
 
+const router = useRouter();
 const title = ref("");
 const content = ref("");
 
 const write = function () {
-  axios.post("http://localhost:8080/posts", {
-    title: title.value,
-    content: content.value
-  });
+  axios
+      .post("/api/posts", {
+        title: title.value,
+        content: content.value
+      })
+      .then(() => {
+        // router.push({name: "home"})
+         router.replace({name: "home"}) //뒤로가기 못하게 수정
+      });
 }
 </script>
 

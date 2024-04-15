@@ -10,9 +10,9 @@ public class WebConfig implements WebMvcConfigurer {
      * CORS 이슈 백엔드에서 처리 방법
      * @param registry
      */
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173/");
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("http://localhost:5173/");
+//    }
 }
