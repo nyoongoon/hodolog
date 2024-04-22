@@ -22,7 +22,8 @@ const moveToRead = () => {
   <ul>
     <li v-for="post in posts" :key="post.id" @click="moveToRead()">
       <div>
-        {{ post.title }}
+        <router-link :to="{name : 'read', params: {postId: post.id} }">{{
+            post.title }}</router-link>
       </div>
       <div>
         {{ post.content }}
