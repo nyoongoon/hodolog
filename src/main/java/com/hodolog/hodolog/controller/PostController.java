@@ -1,6 +1,5 @@
 package com.hodolog.hodolog.controller;
 
-import com.hodolog.hodolog.exception.InvalidRequest;
 import com.hodolog.hodolog.request.PostCreate;
 import com.hodolog.hodolog.request.PostEdit;
 import com.hodolog.hodolog.request.PostSearch;
@@ -19,6 +18,11 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+
+    @GetMapping("test")
+    public String test(){
+        return "hello";
+    }
 
     @PostMapping("/posts")
     public void post(@RequestBody @Valid PostCreate request) throws Exception {

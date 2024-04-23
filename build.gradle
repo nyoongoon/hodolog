@@ -85,3 +85,7 @@ bootJar {
         into "src/main/resources/static/docs"
     }
 }
+/* -plain.jar 파일 생성 관련*/
+jar {
+    enabled = false
+}

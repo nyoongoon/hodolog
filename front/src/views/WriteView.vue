@@ -15,7 +15,7 @@ const write = function () {
       })
       .then(() => {
         // router.push({name: "home"})
-         router.replace({name: "home"}) //뒤로가기 못하게 수정
+        router.replace({name: "home"}) //뒤로가기 못하게 수정
       });
 }
 </script>
@@ -28,7 +28,9 @@ const write = function () {
     <el-input v-model="content" type="textarea" rows="15"/>
   </div>
   <div class="mt-2">
-    <el-button type="primary" @click="write()">글 작성 완료</el-button>
+    <div class="d-flex justify-content-end">
+      <el-button type="primary" @click="write()">작성완료</el-button>
+    </div>
   </div>
 
 

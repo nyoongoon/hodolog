@@ -4,9 +4,9 @@
 
 <template>
   <el-header class="p-0">
-    <el-menu mode="horizontal">
-      <el-menu-item index="1">Home</el-menu-item>
-      <el-menu-item index="2">글 작성</el-menu-item>
+    <el-menu mode="horizontal" :router="true">
+      <el-menu-item index="/">Home</el-menu-item>
+      <el-menu-item index="/write">글 작성</el-menu-item>
     </el-menu>
   </el-header>
 </template>

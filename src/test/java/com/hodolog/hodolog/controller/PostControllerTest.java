@@ -43,28 +43,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청 시 Hello World를 출력한다.")
-    void test() throws Exception {
-        //given
-        PostCreate request = PostCreate.builder()
-                .title("제목입니다.")
-                .content("내용입니다.")
-                .build();
-        String json = objectMapper.writeValueAsString(request);
-
-        //expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        // 개발자가 매우 읽기 힘든 형태
-                        .content(json))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(""))
-                .andDo(MockMvcResultHandlers.print());
-        //
-    }
-
-    @Test
-    @DisplayName("/posts 요청시 title 값은 필수다.")
+    @DisplayName("글 작성 요청시 title 값은 필수다.")
     void test2() throws Exception {
         //given
         PostCreate request = PostCreate.builder()
