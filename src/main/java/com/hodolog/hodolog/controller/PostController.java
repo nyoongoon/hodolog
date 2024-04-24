@@ -19,9 +19,14 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("test")
+    @GetMapping("/test")
     public String test(){
         return "hello";
+    }
+
+    @GetMapping("/non-intercepted")
+    public String nonIntercepted(){
+        return "nonIntercepted";
     }
 
     @PostMapping("/posts")
