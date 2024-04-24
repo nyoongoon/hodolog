@@ -23,9 +23,9 @@ public class PostController {
 //    @GetMapping("/foo") //@RequestAttribute사용예시: 인터셉터->컨트롤러 값 설정가능
 //    public String foo(@RequestAttribute("userName") String userName){
     @GetMapping("/foo")
-    public String foo(UserSession userSession){
-        log.info(">>> {}", userSession.name);
-        return "foo";
+    public Long foo(UserSession userSession){
+        log.info(">>> {}", userSession.id);
+        return userSession.id;
     }
 
     @GetMapping("/non-intercepted")

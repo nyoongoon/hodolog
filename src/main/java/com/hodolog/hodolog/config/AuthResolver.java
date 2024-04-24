@@ -19,13 +19,15 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         //컨트롤러에서 사용할 DTO나 어노테이션에 대한 값을 세팅해줌
-        String accessToken = webRequest.getParameter("accessToken");
-        if(accessToken == null || accessToken.equals("")){
+//        String accessToken = webRequest.getParameter("accessToken"); //인증정보는 헤더를 통해 가져오는 것으로 수정
+        String accessToken = webRequest.getHeader("Authorization");
+        if (accessToken == null || accessToken.equals("")) {
             throw new Unauthorized();
         }
 
-        UserSession userSession = new UserSession();
-        userSession.name = accessToken;
-        return userSession;
+        // 데이터베이스 사용자 확인 작업..
+        // ..
+
+        return new UserSession(1L);
     }
 }
