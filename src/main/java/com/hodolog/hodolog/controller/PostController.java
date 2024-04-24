@@ -1,5 +1,6 @@
 package com.hodolog.hodolog.controller;
 
+import com.hodolog.hodolog.config.data.UserSession;
 import com.hodolog.hodolog.request.PostCreate;
 import com.hodolog.hodolog.request.PostEdit;
 import com.hodolog.hodolog.request.PostSearch;
@@ -19,9 +20,11 @@ public class PostController {
 
     private final PostService postService;
 
+//    @GetMapping("/foo") //@RequestAttribute사용예시: 인터셉터->컨트롤러 값 설정가능
+//    public String foo(@RequestAttribute("userName") String userName){
     @GetMapping("/foo")
-    public String foo(@RequestAttribute("userName") String userName){
-        log.info(">>> {}", userName);
+    public String foo(UserSession userSession){
+        log.info(">>> {}", userSession.name);
         return "foo";
     }
 
