@@ -19,9 +19,10 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("/test")
-    public String test(){
-        return "hello";
+    @GetMapping("/foo")
+    public String foo(@RequestAttribute("userName") String userName){
+        log.info(">>> {}", userName);
+        return "foo";
     }
 
     @GetMapping("/non-intercepted")

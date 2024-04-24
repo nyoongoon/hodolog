@@ -10,7 +10,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new AuthInterceptor())
-                .excludePathPatterns("/non-intercepted"); // 인터셉터 제외
+                .excludePathPatterns("/error", "/favicon.ico", "/non-intercepted"); // 인터셉터 제외
     }
     /**
      * CORS 이슈 백엔드에서 처리 방법

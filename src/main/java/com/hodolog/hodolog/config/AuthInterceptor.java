@@ -17,9 +17,10 @@ public class AuthInterceptor implements HandlerInterceptor {
     // 핸들러 어탭터 가기 전에 항상 실행
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info(">> preHandle");
+//        log.info(">> preHandle");
         String accessToken = request.getParameter("accessToken");
-        if (accessToken != null && accessToken.equals("hodolman")) {
+        if (accessToken != null && !accessToken.equals("")) {
+            request.setAttribute("userName", accessToken);
             return true;
         }
 
@@ -33,7 +34,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     // The interceptor calls this method after the handler execution but before the DispatcherServlet renders the view.
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        log.info(">> postHandle - method executed");
+//        log.info(">> postHandle - method executed");
     }
 
     // afterCompletion
@@ -41,7 +42,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     // 모든 View에서 최종 결과를 생성하는 일을 포함한 모든 작업이 완료된 후에 실행
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        log.info(">> afterCompletion - Request Completed");
+//        log.info(">> afterCompletion - Request Completed");
     }
 
 
