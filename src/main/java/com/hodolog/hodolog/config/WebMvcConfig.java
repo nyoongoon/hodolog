@@ -1,14 +1,17 @@
 package com.hodolog.hodolog.config;
 
+import com.hodolog.hodolog.repository.SessionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
+    private final SessionRepository sessionRepository;
     // 인터셉터 주입 설정
 //    @Override
 //    public void addInterceptors(InterceptorRegistry registry) {
@@ -19,7 +22,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     // 아규먼트 리졸버 주입 설정
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new AuthResolver()); //--> 인터셉터인증->>인증이 필요한 메소드에는 UserSession DTO를 받도록 변경
+        resolvers.add(new AuthResolver(sessionRepository)); //--> 인터셉터인증->>인증이 필요한 메소드에는 UserSession DTO를 받도록 변경
     }
 
 
