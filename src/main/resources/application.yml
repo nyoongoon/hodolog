@@ -14,3 +14,8 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+  jpa:
+    defer-datasource-initialization: true # data.sql 실행용
+  sql:
+    init:
+      mode: always # data.sql 실행용
