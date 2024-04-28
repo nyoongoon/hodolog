@@ -5,14 +5,17 @@ import com.hodolog.hodolog.domain.Session;
 import com.hodolog.hodolog.exception.Unauthorized;
 import com.hodolog.hodolog.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import java.util.Optional;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
+@Slf4j
 @RequiredArgsConstructor
 public class AuthResolver implements HandlerMethodArgumentResolver {
 
@@ -29,7 +32,20 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         //컨트롤러에서 사용할 DTO나 어노테이션에 대한 값을 세팅해줌
 //        String accessToken = webRequest.getParameter("accessToken"); //인증정보는 헤더를 통해 가져오는 것으로 수정
-        String accessToken = webRequest.getHeader("Authorization");
+//        String accessToken = webRequest.getHeader("Authorization"); //인증정보 쿠키를 통해 가져오는 것으로 수정
+        HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
+        if (servletRequest == null) {
+            log.error("servlet request is null");
+            throw new Unauthorized();
+        }
+        Cookie[] cookies = servletRequest.getCookies();
+        if (cookies.length == 0) {
+            log.error("쿠키가 없음");
+            throw new Unauthorized();
+        }
+
+        String accessToken = cookies[0].getValue();
+
         if (accessToken == null || accessToken.equals("")) {
             throw new Unauthorized();
         }

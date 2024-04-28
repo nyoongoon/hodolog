@@ -4,6 +4,7 @@ import lombok.Getter;
 
 /**
  * 응답 값이 하나더라도, 클라이언트에 json 포맷으로 내려주기위해 response dto를 만드는게 좋다..?
+ * // -> 요즘엔 인증 값을 응답바디가 아니라 Cookie로 내려주는 것이 추세.
  */
 @Getter
 public class SessionResponse {
