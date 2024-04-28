@@ -17,10 +17,11 @@ public class AuthService {
     private final UserRepository userRepository;
 
     @Transactional
-    public String signin(Login request){
+    public Long signin(Login request){
         User user = userRepository.findByEmailAndPassword(request.getEmail(), request.getPassword())
                 .orElseThrow(InvalidSigninInformation::new);
-        Session session = user.addSession();//연관관계를 통한 세션엔티티 생성 및 영속성 전이 (세션엔티티생성될떄randomUUID생성됨)
-        return session.getAccessToken();
+//        Session session = user.addSession();//연관관계를 통한 세션엔티티 생성 및 영속성 전이 (세션엔티티생성될떄randomUUID생성됨)
+//        return session.getAccessToken();
+        return user.getId();
     }
 }
