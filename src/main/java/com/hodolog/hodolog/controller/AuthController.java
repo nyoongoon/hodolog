@@ -2,6 +2,7 @@ package com.hodolog.hodolog.controller;
 
 import com.hodolog.hodolog.config.AppConfig;
 import com.hodolog.hodolog.request.Login;
+import com.hodolog.hodolog.request.Signup;
 import com.hodolog.hodolog.response.SessionResponse;
 import com.hodolog.hodolog.service.AuthService;
 import io.jsonwebtoken.Jwts;
@@ -64,5 +65,10 @@ public class AuthController {
                 .compact();
 
         return new SessionResponse(jws);
+    }
+
+    @PostMapping("/auth/signup")
+    public void signup(@RequestBody Signup signup){
+        authService.signup(signup);
     }
 }

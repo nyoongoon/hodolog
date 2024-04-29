@@ -1,12 +1,12 @@
 package com.hodolog.hodolog.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hodolog.hodolog.domain.Session;
 import com.hodolog.hodolog.domain.User;
 import com.hodolog.hodolog.repository.SessionRepository;
 import com.hodolog.hodolog.repository.UserRepository;
 import com.hodolog.hodolog.request.Login;
+import com.hodolog.hodolog.request.Signup;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -159,9 +159,27 @@ class AuthControllerTest {
 
         //expected
         mockMvc.perform(MockMvcRequestBuilders.get("/foo")
-                        .header("Authorization", session.getAccessToken()+"abc") //토큰변조
+                        .header("Authorization", session.getAccessToken() + "abc") //토큰변조
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("회원가입")
+    void test6() throws Exception {
+        // given
+        Signup signup = Signup.builder()
+                .email("hodolman88@gmail.com")
+                .name("hodolman")
+                .password("1234")
+                .build();
+
+        //expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/signup")
+                        .content(objectMapper.writeValueAsString(signup))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
 }
