@@ -21,7 +21,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class AuthResolver implements HandlerMethodArgumentResolver {
 
     private static final String KEY = "rTPmA9Sgk+Q1Xwu]bG7E6xFFUhQpdi+a151yPnRTK/Q=";
-    private final SessionRepository sessionRepository;
+    private final AppConfig appConfig;
+//    private final SessionRepository sessionRepository;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -62,12 +63,11 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
         if (jws == null || jws.equals("")) {
             throw new Unauthorized();
         }
-        byte[] decodedKey = Base64.decodeBase64(KEY);
 
         /* jwt 복호화 */
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
-                    .setSigningKey(decodedKey)
+                    .setSigningKey(appConfig.getJwtKey())
                     .build()
                     .parseClaimsJws(jws);
             log.info(">>>>>", claims);

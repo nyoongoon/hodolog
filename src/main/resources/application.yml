@@ -19,3 +19,6 @@ spring:
   sql:
     init:
       mode: always # data.sql 실행용
+
+hodolman:
+  jwt-kwy: "rTPmA9Sgk+Q1Xwu]bG7E6xFFUhQpdi+a151yPnRTK/Q="

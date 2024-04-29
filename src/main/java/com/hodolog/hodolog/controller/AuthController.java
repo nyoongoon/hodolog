@@ -1,5 +1,6 @@
 package com.hodolog.hodolog.controller;
 
+import com.hodolog.hodolog.config.AppConfig;
 import com.hodolog.hodolog.request.Login;
 import com.hodolog.hodolog.response.SessionResponse;
 import com.hodolog.hodolog.service.AuthService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.crypto.SecretKey;
 import java.util.Base64;
+import java.util.Date;
 
 @Slf4j
 @RestController
@@ -20,6 +22,7 @@ import java.util.Base64;
 public class AuthController {
 
     private static final String KEY = "rTPmA9Sgk+Q1Xwu]bG7E6xFFUhQpdi+a151yPnRTK/Q=";
+    private final AppConfig appConfig;
     private final AuthService authService;
 
     @PostMapping("/auth/login")
@@ -53,10 +56,11 @@ public class AuthController {
 
         Long userId = authService.signin(login);
         /* jwt 인증으로 변경 */
-        SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(KEY));
+        SecretKey key = Keys.hmacShaKeyFor(appConfig.getJwtKey());
         String jws = Jwts.builder()
                 .setSubject(String.valueOf(userId))
                 .signWith(key)
+                .setIssuedAt(new Date())
                 .compact();
 
         return new SessionResponse(jws);
