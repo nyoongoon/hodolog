@@ -2,6 +2,7 @@ package com.hodolog.hodolog.request;
 
 import lombok.*;
 
+
 @Setter
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) //없으면 objectMapper json 변환 시 에러
