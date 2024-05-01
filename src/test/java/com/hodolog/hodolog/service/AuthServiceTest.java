@@ -1,17 +1,22 @@
 package com.hodolog.hodolog.service;
 
+import com.hodolog.hodolog.crypto.ScryptPasswordEncoder;
 import com.hodolog.hodolog.domain.User;
 import com.hodolog.hodolog.exception.AlreadyExistsEmailException;
+import com.hodolog.hodolog.exception.InvalidSigninInformation;
 import com.hodolog.hodolog.repository.UserRepository;
+import com.hodolog.hodolog.request.Login;
 import com.hodolog.hodolog.request.Signup;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ActiveProfiles("test") // test프로파일로 실행
 @SpringBootTest
 class AuthServiceTest {
 
@@ -40,9 +45,8 @@ class AuthServiceTest {
         assertEquals(userRepository.count(), 1L);
         User user = userRepository.findAll().iterator().next();
         assertEquals(signup.getEmail(), user.getEmail());
-        assertNotNull(user.getPassword());
-        assertNotEquals("1234", user.getPassword());
-        assertEquals("hodolman", user.getName() );
+        assertEquals("1234", user.getPassword());
+        assertEquals("hodolman", user.getName());
     }
 
     @Test
@@ -63,5 +67,52 @@ class AuthServiceTest {
                 .build();
         // expected
         assertThrows(AlreadyExistsEmailException.class, () -> authService.signup(signup));
+    }
+
+    @Test
+    @DisplayName("로그인 성공")
+    void test3() {
+        // given
+        ScryptPasswordEncoder encoder = new ScryptPasswordEncoder();
+        String encryptedPassword = encoder.encrypt("1234");
+        String email = "hodolman88@gmail.com";
+        User user = User.builder()
+                .email(email)
+                .name("짱돌맨")
+                .password(encryptedPassword)
+                .build();
+        userRepository.save(user);
+
+        Login login = Login.builder()
+                .email(email)
+                .password("1234")
+                .build();
+        // when
+        Long userId = authService.signin(login);
+
+        // then
+        assertNotNull(userId);
+    }
+
+    @Test
+    @DisplayName("로그인 비밀번호 틀림")
+    void test4() {
+        // given
+        ScryptPasswordEncoder encoder = new ScryptPasswordEncoder();
+        String encryptedPassword = encoder.encrypt("1234");
+        String email = "hodolman88@gmail.com";
+        User user = User.builder()
+                .email(email)
+                .name("짱돌맨")
+                .password(encryptedPassword)
+                .build();
+        userRepository.save(user);
+
+        Login login = Login.builder()
+                .email("hodolman88@gmail.com")
+                .password("4567")
+                .build();
+        // expected
+        assertThrows(InvalidSigninInformation.class, ()-> authService.signin(login));
     }
 }

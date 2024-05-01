@@ -1,2 +1,6 @@
-package com.hodolog.hodolog.crypto;public class PasswordEncoder {
+package com.hodolog.hodolog.crypto;
+
+public interface PasswordEncoder {
+    String encrypt(String rawPassword);
+    boolean matches(String rawPassword, String encryptedPassword);
 }
