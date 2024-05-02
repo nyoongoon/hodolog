@@ -32,6 +32,10 @@ dependencies {
     implementation 'org.springframework.security:spring-security-crypto'
     implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
 
+    /* security */
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security:spring-security-test'
+
 //    // Spring Boot 2.x QueryDsl
 //    implementation 'com.querydsl:querydsl-core'
 //    implementation 'com.querydsl:querydsl-jpa'
