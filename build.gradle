@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.5.9'
+    id 'org.springframework.boot' version '3.0.5'
     id 'io.spring.dependency-management' version '1.1.4'
     id 'org.asciidoctor.jvm.convert' version '3.3.2' //restdoc
 }
@@ -32,25 +32,26 @@ dependencies {
     implementation 'org.springframework.security:spring-security-crypto'
     implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
 
-    // Spring Boot 2.x QueryDsl
-    implementation 'com.querydsl:querydsl-core'
-    implementation 'com.querydsl:querydsl-jpa'
-    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
-    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
-    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+//    // Spring Boot 2.x QueryDsl
+//    implementation 'com.querydsl:querydsl-core'
+//    implementation 'com.querydsl:querydsl-jpa'
+//    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
+//    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+//    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
 
     // annotationProcessor -> 설정 파일과 yml 파일 값 동기화
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     //restdoc
-    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.6.RELEASE'
-    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc:2.0.6.RELEASE'
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor:3.0.0'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc:3.0.0'
 
-//    // ⭐ Spring boot 3.x이상에서 QueryDsl 패키지를 정의하는 방법
-//    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-//    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
-//    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-//    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+//    // ⭐ Spring boot 3.x이상에서 QueryDsl 패키지를 정의하는
+    implementation 'com.querydsl:querydsl-core:5.0.0'
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
     /* jwt */
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'

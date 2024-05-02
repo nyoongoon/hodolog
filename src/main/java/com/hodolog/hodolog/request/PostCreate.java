@@ -3,7 +3,7 @@ package com.hodolog.hodolog.request;
 import com.hodolog.hodolog.exception.InvalidRequest;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 @Getter
 //@Setter // 불필요 --> 기본 생성자를 통해 @RequestBody를 바인딩..?

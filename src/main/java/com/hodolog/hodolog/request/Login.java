@@ -2,7 +2,7 @@ package com.hodolog.hodolog.request;
 
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * 스프링 시큐리티 도입으로 불필요

@@ -10,7 +10,7 @@ spring:
         one-indexed-parameters: true # @PageableDefault Pageable 에 대해서 작동
         default-page-size: 5
   datasource:
-    url: jdbc:h2:mem:hodolog
+    url: jdbc:h2:mem:hodolog;NON_KEYWORDS=USER
     username: sa
     password:
     driver-class-name: org.h2.Driver

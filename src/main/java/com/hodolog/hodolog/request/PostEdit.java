@@ -2,7 +2,7 @@ package com.hodolog.hodolog.request;
 
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * PostEdit 생성 시점에 PostCreate와 내용이 같더라도
