@@ -1,4 +1,4 @@
-#### 로그인
+# ### 로그인
 #POST localhost:8080/auth/login
 #Content-Type: application/json
 #
@@ -6,6 +6,18 @@
 #  "email": "hodolman88@gmail.com",
 #  "password" : "1234"
 #}
+
+### 회원가입
+POST localhost:8080/auth/signup
+Content-Type: application/json
+
+{
+  "name": "호돌맨",
+  "email": "hodolman88@gmail.com",
+  "password": "1234"
+}
+
+
 ### 로그인 - 시큐리티 폼
 POST localhost:8080/auth/login
 Content-Type: application/x-www-form-urlencoded

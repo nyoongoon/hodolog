@@ -5,6 +5,7 @@ import com.hodolog.hodolog.exception.AlreadyExistsEmailException;
 import com.hodolog.hodolog.repository.UserRepository;
 import com.hodolog.hodolog.request.Signup;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,7 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
-//    private final PasswordEncoder encoder;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * 시큐리티 도입으로 불필요
@@ -33,17 +34,16 @@ public class AuthService {
 //
 //        return user.getId();
 //    }
-
     public void signup(Signup signup) {
         Optional<User> userOptional = userRepository.findByEmail(signup.getEmail());
         if (userOptional.isPresent()) {
             throw new AlreadyExistsEmailException();
         }
-//        String encryptedPassword = encoder.encrypt(signup.getPassword());
+        String encryptedPassword = passwordEncoder.encode(signup.getPassword());
 
         User user = User.builder()
                 .name(signup.getName())
-                .password("임시")
+                .password(encryptedPassword)
                 .email(signup.getEmail())
                 .build();
         userRepository.save(user);
