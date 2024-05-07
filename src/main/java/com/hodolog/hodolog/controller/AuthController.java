@@ -5,6 +5,7 @@ import com.hodolog.hodolog.request.Signup;
 import com.hodolog.hodolog.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,11 @@ public class AuthController {
     private static final String KEY = "rTPmA9Sgk+Q1Xwu]bG7E6xFFUhQpdi+a151yPnRTK/Q=";
     private final AppConfig appConfig;
     private final AuthService authService;
+
+    @GetMapping("/auth/login")
+    public String login() {
+        return "로그인 페이지 입니다.";
+    }
 
     /**
      * 시큐리티 도입으로 불필요

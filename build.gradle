@@ -35,6 +35,7 @@ dependencies {
     /* security */
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security:spring-security-test'
+    implementation 'org.springframework.session:spring-session-jdbc' // 시큐리티 세션
 
 //    // Spring Boot 2.x QueryDsl
 //    implementation 'com.querydsl:querydsl-core'

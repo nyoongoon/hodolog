@@ -26,3 +26,5 @@
 - AuthenticationManager가 실제 인증을 처리하며,
 - AuthenticationProvidor가 인증 요청을 처리하여 성공하면
 - SecurityContextHolder에 인증 정보를 저장하는 구조입니다.
+
+### Spring Security JDBC Session

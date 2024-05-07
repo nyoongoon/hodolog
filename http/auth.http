@@ -1,11 +1,19 @@
-### 로그인
+#### 로그인
+#POST localhost:8080/auth/login
+#Content-Type: application/json
+#
+#{
+#  "email": "hodolman88@gmail.com",
+#  "password" : "1234"
+#}
+### 로그인 - 시큐리티 폼
 POST localhost:8080/auth/login
-Content-Type: application/json
+Content-Type: application/x-www-form-urlencoded
 
-{
-  "email": "hodolman88@gmail.com",
-  "password" : "1234"
-}
+username=hodolman&password=1234&remember=1
+
+### 메인페이지
+GET http://localhost:8080/
 
 ### 인증 페이지 요청
 
