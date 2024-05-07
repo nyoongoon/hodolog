@@ -4,7 +4,6 @@ import com.hodolog.hodolog.domain.User;
 import com.hodolog.hodolog.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -14,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -46,8 +46,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/auth/signup").permitAll()
+                .requestMatchers("/auth/login").permitAll()
+                .requestMatchers("/auth/signup").permitAll()
+//                .requestMatchers("/user").hasAnyRole("USER", "ADMIN") //hasAnyRole 역할 여러개 받음
+                .requestMatchers("/admin")
+//                .hasRole("ADMIN") //hasRole() 에서는 ROLE_ 안붙여도 됨!
+                .access(new WebExpressionAuthorizationManager(
+                        "hasRole('ADMIN') AND hasAuthority('WRITE')")) //역할과 권한 동시에
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

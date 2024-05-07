@@ -22,13 +22,21 @@ Content-Type: application/json
 POST localhost:8080/auth/login
 Content-Type: application/x-www-form-urlencoded
 
-username=hodolman&password=1234&remember=1
+username=hodolman88@gmail.com&password=1234&remember=1
 
 ### 메인페이지
 GET http://localhost:8080/
+
 
 ### 인증 페이지 요청
 
 GET localhost:8080/foo
 Content-Type: application/json
 Cookie: SESSION=9a60d19a-486e-45c4-ba13-d0b2acb64ef2
+
+
+### 사용자 페이지
+GET http://localhost:8080/user
+
+### 관리자 페이지
+GET http://localhost:8080/admin
