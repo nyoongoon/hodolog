@@ -7,6 +7,7 @@ import com.hodolog.hodolog.response.PostResponse;
 import com.hodolog.hodolog.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -35,6 +36,7 @@ public class PostController {
         return "nonIntercepted";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/posts")
     public void post(@RequestBody @Valid PostCreate request) throws Exception {
         // 리턴값 내려주는 경우
@@ -67,12 +69,14 @@ public class PostController {
         return postService.getList(pageable);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PatchMapping("/posts/{postId}")
     public void edit(@PathVariable Long postId, @RequestBody @Valid PostEdit postEdit) {
         // 클라이언트에서 결과 리턴을 요구할 때도 있음.
         postService.edit(postId, postEdit);
     }
-
+    
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/posts/{postId}")
     public void delete(@PathVariable Long postId) {
 

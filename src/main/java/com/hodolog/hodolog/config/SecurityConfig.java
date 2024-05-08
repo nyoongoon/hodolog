@@ -5,6 +5,7 @@ import com.hodolog.hodolog.config.filter.EmailPasswordAuthFilter;
 import com.hodolog.hodolog.config.handler.Http401Handler;
 import com.hodolog.hodolog.config.handler.Http403Handler;
 import com.hodolog.hodolog.config.handler.LoginFailHandler;
+import com.hodolog.hodolog.config.handler.LoginSuccessHandler;
 import com.hodolog.hodolog.domain.User;
 import com.hodolog.hodolog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -65,14 +66,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/login").permitAll()
-                .requestMatchers("/auth/signup").permitAll()
+//                .requestMatchers("/auth/login").permitAll()
+//                .requestMatchers("/auth/signup").permitAll()
 //                .requestMatchers("/user").hasAnyRole("USER", "ADMIN") //hasAnyRole 역할 여러개 받음
 //                .requestMatchers("/user").hasRole("USER") -> 메서드 시큐리티 적용
 //                .requestMatchers("/admin").hasRole("ADMIN") //hasRole() 에서는 ROLE_ 안붙여도 됨!
 //                .access(new WebExpressionAuthorizationManager(
 //                        "hasRole('ADMIN') AND hasAuthority('WRITE')")) //역할과 권한 동시에
-                .anyRequest().authenticated()
+//                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .addFilterBefore(usernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) //json 로그인 처리 필터 삽입
 //                    .formLogin() //json 요청 방식 로그인으로 대체
@@ -120,7 +122,7 @@ public class SecurityConfig {
         EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter("/auth/login", objectMapper);
         filter.setAuthenticationManager(authenticationManager());
         // AbstractAuthenticationProcessingFilter에서 가지고 있던 것들을 커스텀
-        filter.setAuthenticationSuccessHandler(new SimpleUrlAuthenticationSuccessHandler("/"));
+        filter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
         filter.setAuthenticationFailureHandler(new LoginFailHandler(objectMapper));
         // 실제로 인증이 완료 됐을 때 요청 내에서 인증이 유효하도록 만들어주는 컨텍스트 -> 이것이 있어야 세션 발급됨
         filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());

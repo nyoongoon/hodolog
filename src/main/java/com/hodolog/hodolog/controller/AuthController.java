@@ -19,10 +19,10 @@ public class AuthController {
     private final AppConfig appConfig;
     private final AuthService authService;
 
-    @GetMapping("/auth/login")
-    public String login() {
-        return "로그인 페이지 입니다.";
-    }
+//    @GetMapping("/auth/login") -> 화면으로 대체
+//    public String login() {
+//        return "로그인 페이지 입니다.";
+//    }
 
     /**
      * 시큐리티 도입으로 불필요
