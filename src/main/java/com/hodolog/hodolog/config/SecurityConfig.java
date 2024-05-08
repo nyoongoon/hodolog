@@ -1,6 +1,7 @@
 package com.hodolog.hodolog.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hodolog.hodolog.config.filter.EmailPasswordAuthFilter;
 import com.hodolog.hodolog.config.handler.Http401Handler;
 import com.hodolog.hodolog.config.handler.Http403Handler;
 import com.hodolog.hodolog.config.handler.LoginFailHandler;
@@ -10,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -19,7 +23,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
 
 @Slf4j
 @Configuration
@@ -28,6 +36,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final ObjectMapper objectMapper;
+    private final UserRepository userRepository;
 
     /**
      * 시큐리티 무시 옵션 설정
@@ -64,14 +73,15 @@ public class SecurityConfig {
 //                        "hasRole('ADMIN') AND hasAuthority('WRITE')")) //역할과 권한 동시에
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                .loginPage("/auth/login") // -> http 요청 403에러 발생중 !!!
-                .loginProcessingUrl("/auth/login") //로그인 비즈니스 처리 post url
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .defaultSuccessUrl("/")
-                .failureHandler(new LoginFailHandler(objectMapper)) //로그인 실패 시 핸들러
-                .and()
+                .addFilterBefore(usernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) //json 로그인 처리 필터 삽입
+//                    .formLogin() //json 요청 방식 로그인으로 대체
+//                    .loginPage("/auth/login") // -> http 요청 403에러 발생중 !!!
+//                    .loginProcessingUrl("/auth/login") //로그인 비즈니스 처리 post url
+//                    .usernameParameter("username")
+//                    .passwordParameter("password")
+//                    .defaultSuccessUrl("/")
+//                    .failureHandler(new LoginFailHandler(objectMapper)) //로그인 실패 시 핸들러
+//                .and()
                 .exceptionHandling(e -> {
                     e.accessDeniedHandler(new Http403Handler(objectMapper));
                     e.authenticationEntryPoint(new Http401Handler(objectMapper)); //로그인 필요한 페이지에 로그인 없이 접근했을 로그인을 요청하게 해줌
@@ -101,6 +111,32 @@ public class SecurityConfig {
                     .orElseThrow(() -> new UsernameNotFoundException(username + "을 찾을 수 없습니다."));
             return new UserPrincipal(user);
         };
+    }
+
+    //json 로그인 방식 요청을 받기위한 필터 생성
+    @Bean
+    public EmailPasswordAuthFilter usernamePasswordAuthenticationFilter() {
+        EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter("/auth/login", objectMapper);
+        filter.setAuthenticationManager(authenticationManager());
+        // AbstractAuthenticationProcessingFilter에서 가지고 있던 것들을 커스텀
+        filter.setAuthenticationSuccessHandler(new SimpleUrlAuthenticationSuccessHandler("/"));
+        filter.setAuthenticationFailureHandler(new LoginFailHandler(objectMapper));
+        // 실제로 인증이 완료 됐을 때 요청 내에서 인증이 유효하도록 만들어주는 컨텍스트 -> 이것이 있어야 세션 발급됨
+        filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
+        //remember-me
+        SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
+        rememberMeServices.setAlwaysRemember(true);
+        rememberMeServices.setValiditySeconds(3600 * 24 * 30);
+        filter.setRememberMeServices(rememberMeServices);
+        return filter;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() { //filter에 AuthenticationManager 넘겨주기 위한 Bean
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService(userRepository));
+        provider.setPasswordEncoder(passwordEncoder());
+        return new ProviderManager(provider); //provider를 넘겨주기
     }
 
     @Bean
