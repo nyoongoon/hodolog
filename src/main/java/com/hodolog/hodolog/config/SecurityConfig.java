@@ -1,7 +1,13 @@
 package com.hodolog.hodolog.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hodolog.hodolog.config.handler.Http401Handler;
+import com.hodolog.hodolog.config.handler.Http403Handler;
+import com.hodolog.hodolog.config.handler.LoginFailHandler;
 import com.hodolog.hodolog.domain.User;
 import com.hodolog.hodolog.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,13 +19,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+@Slf4j
 @Configuration
 //@EnableWebSecurity(debug = true)
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final ObjectMapper objectMapper;
+
     /**
      * 시큐리티 무시 옵션 설정
      * - WebSecurityCustomizer
@@ -49,10 +58,10 @@ public class SecurityConfig {
                 .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/auth/signup").permitAll()
 //                .requestMatchers("/user").hasAnyRole("USER", "ADMIN") //hasAnyRole 역할 여러개 받음
-                .requestMatchers("/admin")
-//                .hasRole("ADMIN") //hasRole() 에서는 ROLE_ 안붙여도 됨!
-                .access(new WebExpressionAuthorizationManager(
-                        "hasRole('ADMIN') AND hasAuthority('WRITE')")) //역할과 권한 동시에
+                .requestMatchers("/user").hasRole("USER")
+                .requestMatchers("/admin").hasRole("ADMIN") //hasRole() 에서는 ROLE_ 안붙여도 됨!
+//                .access(new WebExpressionAuthorizationManager(
+//                        "hasRole('ADMIN') AND hasAuthority('WRITE')")) //역할과 권한 동시에
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -61,7 +70,12 @@ public class SecurityConfig {
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/")
+                .failureHandler(new LoginFailHandler(objectMapper)) //로그인 실패 시 핸들러
                 .and()
+                .exceptionHandling(e -> {
+                    e.accessDeniedHandler(new Http403Handler(objectMapper));
+                    e.authenticationEntryPoint(new Http401Handler(objectMapper)); //로그인 필요한 페이지에 로그인 없이 접근했을 로그인을 요청하게 해줌
+                })
                 .rememberMe(rm -> rm.rememberMeParameter("remember")
                         .alwaysRemember(false)
                         .tokenValiditySeconds(2592000)
