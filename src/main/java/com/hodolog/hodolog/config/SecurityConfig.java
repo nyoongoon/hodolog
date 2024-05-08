@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -31,8 +32,8 @@ import org.springframework.session.security.web.authentication.SpringSessionReme
 
 @Slf4j
 @Configuration
-//@EnableWebSecurity(debug = true)
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
+@EnableMethodSecurity //기본값은 prePostEnabled=true
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final ObjectMapper objectMapper;
@@ -67,8 +68,8 @@ public class SecurityConfig {
                 .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/auth/signup").permitAll()
 //                .requestMatchers("/user").hasAnyRole("USER", "ADMIN") //hasAnyRole 역할 여러개 받음
-                .requestMatchers("/user").hasRole("USER")
-                .requestMatchers("/admin").hasRole("ADMIN") //hasRole() 에서는 ROLE_ 안붙여도 됨!
+//                .requestMatchers("/user").hasRole("USER") -> 메서드 시큐리티 적용
+//                .requestMatchers("/admin").hasRole("ADMIN") //hasRole() 에서는 ROLE_ 안붙여도 됨!
 //                .access(new WebExpressionAuthorizationManager(
 //                        "hasRole('ADMIN') AND hasAuthority('WRITE')")) //역할과 권한 동시에
                 .anyRequest().authenticated()
@@ -124,6 +125,7 @@ public class SecurityConfig {
         // 실제로 인증이 완료 됐을 때 요청 내에서 인증이 유효하도록 만들어주는 컨텍스트 -> 이것이 있어야 세션 발급됨
         filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
         //remember-me
+        //todo 리멤버미 쿠키에 저장 안된듯?
         SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
         rememberMeServices.setAlwaysRemember(true);
         rememberMeServices.setValiditySeconds(3600 * 24 * 30);
