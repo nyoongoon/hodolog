@@ -1,5 +1,6 @@
-package com.hodolog.hodolog.annotation;
+package com.hodolog.hodolog.config.annotation;
 
+import com.hodolog.hodolog.config.MocksUserFactory;
 import org.springframework.security.test.context.support.WithSecurityContext;
 
 import java.lang.annotation.Retention;

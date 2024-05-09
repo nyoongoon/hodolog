@@ -1,5 +1,6 @@
-package com.hodolog.hodolog.annotation;
+package com.hodolog.hodolog.config;
 
+import com.hodolog.hodolog.config.annotation.CustomWithMockUser;
 import com.hodolog.hodolog.domain.User;
 import com.hodolog.hodolog.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContext;

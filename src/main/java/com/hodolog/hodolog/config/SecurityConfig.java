@@ -33,7 +33,8 @@ import org.springframework.session.security.web.authentication.SpringSessionReme
 
 @Slf4j
 @Configuration
-@EnableWebSecurity(debug = true)
+//@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final ObjectMapper objectMapper;

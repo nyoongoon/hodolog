@@ -1,15 +1,16 @@
 package com.hodolog.hodolog.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hodolog.hodolog.config.annotation.HodologMockUser;
 import com.hodolog.hodolog.domain.Post;
+import com.hodolog.hodolog.domain.User;
 import com.hodolog.hodolog.repository.PostRepository;
+import com.hodolog.hodolog.repository.UserRepository;
 import com.hodolog.hodolog.request.PostCreate;
 import com.hodolog.hodolog.request.PostEdit;
+import org.aspectj.lang.annotation.After;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,15 +38,18 @@ class PostControllerTest {
 
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    @BeforeEach
+    @AfterEach
     void clean() {
         postRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
     @DisplayName("글 작성 요청시 title 값은 필수다.")
-    @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
+    @HodologMockUser
     void test2() throws Exception {
         //given
         PostCreate request = PostCreate.builder()
@@ -66,9 +70,11 @@ class PostControllerTest {
 
     }
 
+    //test는 WithMockUser 만으로는 UserPrincipal을 알 수 없다.
     @Test
     @DisplayName("글 작성")
-    @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
+    @HodologMockUser(name = "홍길동", email = "hodolman98@gmail.com", password = "1234")
+//    @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
     void test3() throws Exception {
         // given
         PostCreate request = PostCreate.builder()
@@ -94,7 +100,14 @@ class PostControllerTest {
     @DisplayName("글 1개 조회")
     void test4() throws Exception {
         //given
+        User user = User.builder()
+                .name("호돌맨")
+                .email("hodolman88@gmail.com")
+                .password("1234")
+                .build();
+        userRepository.save(user);
         Post post = Post.builder()
+                .user(user)
                 .title("foo")
                 .content("bar")
                 .build();
@@ -114,8 +127,15 @@ class PostControllerTest {
     @DisplayName("글 여러개 조회")
     void test5() throws Exception {
         //given
+        User user = User.builder()
+                .name("호돌맨")
+                .email("hodolman88@gmail.com")
+                .password("1234")
+                .build();
+        userRepository.save(user);
         List<Post> requestPosts = IntStream.range(0, 20)
                 .mapToObj(i -> Post.builder()
+                        .user(user)
                         .title("foo" + i)
                         .content("bar" + i)
                         .build())
@@ -137,8 +157,15 @@ class PostControllerTest {
         // -> offset(Math.min(1, x)) 활용
     void test6() throws Exception {
         //given
+        User user = User.builder()
+                .name("호돌맨")
+                .email("hodolman88@gmail.com")
+                .password("1234")
+                .build();
+        userRepository.save(user);
         List<Post> requestPosts = IntStream.range(0, 20)
                 .mapToObj(i -> Post.builder()
+                        .user(user)
                         .title("foo" + i)
                         .content("bar" + i)
                         .build())
@@ -157,10 +184,12 @@ class PostControllerTest {
 
     @Test
     @DisplayName("글 제목 수정")
-    @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
+    @HodologMockUser
     void test7() throws Exception {
         //given
+        User user = userRepository.findAll().get(0);
         Post post = Post.builder()
+                .user(user)
                 .title("호돌맨")
                 .content("반포자이")
                 .build();
@@ -182,10 +211,12 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 삭제")
-    @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
+    @HodologMockUser
     void test8() throws Exception {
         //given
+        User user = userRepository.findAll().get(0);
         Post post = Post.builder()
+                .user(user)
                 .title("호돌맨")
                 .content("반포자이")
                 .build();
@@ -219,7 +250,7 @@ class PostControllerTest {
 
     @Test
     @DisplayName("존재하지 않는 게시글 수정")
-    @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
+    @HodologMockUser
     void test10() throws Exception {
         // given
         PostEdit postEdit = PostEdit.builder()
@@ -238,7 +269,7 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 작성 시 제목에 '바보'는 포함될 수 없다 ") //todo 이런 로직은 AOP 이용해서 처리해도 괜찮다고 언급..
-    @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
+    @HodologMockUser
     void test1() throws Exception {
         // given
         PostCreate request = PostCreate.builder()
