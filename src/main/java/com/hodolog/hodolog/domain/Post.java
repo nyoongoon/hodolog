@@ -1,11 +1,10 @@
 package com.hodolog.hodolog.domain;
 
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import jakarta.persistence.*;
 
 @Getter // TODO 엔티티의 GETTER에는 서비스의 정책을 절대 넣지 말 것! -> 응답 클래스 분리
 @Entity
@@ -20,20 +19,25 @@ public class Post {
     @Lob
     private String content;
 
+    @ManyToOne
+    @JoinColumn
+    private User user;
+
     @Builder
-    public Post(String title, String content) {
+    public Post(String title, String content, User user) {
         this.title = title;
         this.content = content;
+        this.user = user;
     }
 
     // 에디터의 개념을 꼭 사용하지 않아도 된다 .
-    public PostEditor.PostEditorBuilder toEditor(){ // 빌더를 리턴
+    public PostEditor.PostEditorBuilder toEditor() { // 빌더를 리턴
         return PostEditor.builder()
                 .title(title)
                 .content(content);
     }
 
-    public void edit(PostEditor postEditor){
+    public void edit(PostEditor postEditor) {
         this.title = postEditor.getTitle();
         this.content = postEditor.getContent();
     }
@@ -43,4 +47,8 @@ public class Post {
 //        this.title = title;
 //        this.content = content;
 //    }
+
+    public Long getUserId(){
+        return this.user.getId();
+    }
 }

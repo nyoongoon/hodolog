@@ -1,16 +1,18 @@
 package com.hodolog.hodolog.controller;
 
+import com.hodolog.hodolog.config.UserPrincipal;
 import com.hodolog.hodolog.request.PostCreate;
 import com.hodolog.hodolog.request.PostEdit;
 import com.hodolog.hodolog.request.PostSearch;
 import com.hodolog.hodolog.response.PostResponse;
 import com.hodolog.hodolog.service.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -30,15 +32,14 @@ public class PostController {
 //        log.info(">>> {}", userSession.id);
 //        return userSession.id;
 //    }
-
     @GetMapping("/non-intercepted")
-    public String nonIntercepted(){
+    public String nonIntercepted() {
         return "nonIntercepted";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/posts")
-    public void post(@RequestBody @Valid PostCreate request) throws Exception {
+    public void post(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody @Valid PostCreate request) throws Exception {
         // 리턴값 내려주는 경우
         // Case1. 저장한 데이터 Entity -> response로 응답하기
         // Case2. 저장한 데이터의 primary_id -> reponse로 응답하기
@@ -52,7 +53,7 @@ public class PostController {
         // 하지만 위처럼 메시지를 가져와서 가공하는 등의 작업은 지양하기 -> **메시지를 던지는 방향으로** 리팩토링!
         request.validate(); // 검증 방식 주의 -> 가져오지 말고 던지기 !!!ㅎ
 
-        postService.write(request);
+        postService.write(userPrincipal.getUserId(), request);
     }
 
     @GetMapping("/posts/{postId}")
@@ -75,8 +76,9 @@ public class PostController {
         // 클라이언트에서 결과 리턴을 요구할 때도 있음.
         postService.edit(postId, postEdit);
     }
-    
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
+    //메서드 익스프레션 핸들러 및 시큐리티 Permission Evaluator 커스텀 구현
+    @PreAuthorize("hasRole('ROLE_ADMIN') && hasPermission(#postId, 'POST', 'DELETE')")
     @DeleteMapping("/posts/{postId}")
     public void delete(@PathVariable Long postId) {
 

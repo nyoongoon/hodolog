@@ -37,13 +37,14 @@ class PostServiceTest {
     @DisplayName("글 작성")
     void test1() {
         //given
+        Long userId = 1L;
         PostCreate postCreate = PostCreate.builder()
                 .title("제목입니다.")
                 .content("내용입니다.")
                 .build();
 
         //when
-        postService.write(postCreate);
+        postService.write(userId, postCreate);
 
         //then
         assertEquals(1L, postRepository.count());

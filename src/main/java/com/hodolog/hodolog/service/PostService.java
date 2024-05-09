@@ -2,8 +2,11 @@ package com.hodolog.hodolog.service;
 
 import com.hodolog.hodolog.domain.Post;
 import com.hodolog.hodolog.domain.PostEditor;
+import com.hodolog.hodolog.domain.User;
 import com.hodolog.hodolog.exception.PostNotFound;
+import com.hodolog.hodolog.exception.UserNotFound;
 import com.hodolog.hodolog.repository.PostRepository;
+import com.hodolog.hodolog.repository.UserRepository;
 import com.hodolog.hodolog.request.PostCreate;
 import com.hodolog.hodolog.request.PostEdit;
 import com.hodolog.hodolog.request.PostSearch;
@@ -20,10 +23,15 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PostService {
+    private final UserRepository userRepository;
     private final PostRepository postRepository;
 
-    public Post write(PostCreate postCreate) {
+    public Post write(Long userId, PostCreate postCreate) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFound::new);
+
         Post post = Post.builder()
+                .user(user)
                 .title(postCreate.getTitle())
                 .content(postCreate.getContent())
                 .build();

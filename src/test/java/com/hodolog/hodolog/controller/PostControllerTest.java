@@ -237,7 +237,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("게시글 작성 시 제목에 '바보'는 포함될 수 없다 ")g //todo 이런 로직은 AOP 이용해서 처리해도 괜찮다고 언급..
+    @DisplayName("게시글 작성 시 제목에 '바보'는 포함될 수 없다 ") //todo 이런 로직은 AOP 이용해서 처리해도 괜찮다고 언급..
     @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
     void test1() throws Exception {
         // given

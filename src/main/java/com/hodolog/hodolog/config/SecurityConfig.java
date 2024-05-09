@@ -34,7 +34,6 @@ import org.springframework.session.security.web.authentication.SpringSessionReme
 @Slf4j
 @Configuration
 @EnableWebSecurity(debug = true)
-@EnableMethodSecurity //기본값은 prePostEnabled=true
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final ObjectMapper objectMapper;
@@ -99,24 +98,8 @@ public class SecurityConfig {
                 .build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService(UserRepository userRepository) {
-//        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-//        UserDetails user = User.withUsername("hodolman")
-//                .password("1234")
-//                .roles("ADMIN")
-//                .build();
-//        manager.createUser(user);
-//        return manager;
-        // DB로 관리하기
-        return username -> {
-            User user = userRepository.findByEmail(username)
-                    .orElseThrow(() -> new UsernameNotFoundException(username + "을 찾을 수 없습니다."));
-            return new UserPrincipal(user);
-        };
-    }
-
     //json 로그인 방식 요청을 받기위한 필터 생성
+
     @Bean
     public EmailPasswordAuthFilter usernamePasswordAuthenticationFilter() {
         EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter("/auth/login", objectMapper);
@@ -134,13 +117,29 @@ public class SecurityConfig {
         filter.setRememberMeServices(rememberMeServices);
         return filter;
     }
-
     @Bean
     public AuthenticationManager authenticationManager() { //filter에 AuthenticationManager 넘겨주기 위한 Bean
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService(userRepository));
         provider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(provider); //provider를 넘겨주기
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(UserRepository userRepository) {
+//        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+//        UserDetails user = User.withUsername("hodolman")
+//                .password("1234")
+//                .roles("ADMIN")
+//                .build();
+//        manager.createUser(user);
+//        return manager;
+        // DB로 관리하기
+        return username -> {
+            User user = userRepository.findByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException(username + "을 찾을 수 없습니다."));
+            return new UserPrincipal(user);
+        };
     }
 
     @Bean
