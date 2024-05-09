@@ -17,7 +17,7 @@ public class UserPrincipal extends User { // 시큐리티의 UserDetails를 구�
     public UserPrincipal(com.hodolog.hodolog.domain.User user) {
         super(user.getEmail(), user.getPassword(), List.of(
                 // 역할이 되려면 접두어 ROLE을 붙여야함.
-                new SimpleGrantedAuthority("ROLE_ADMIN")
+                new SimpleGrantedAuthority("ROLE_ADMIN") // todo DB에 저장된 권한 종류 읽어오는 것으로..
         ));
         this.userId = user.getId();
     }

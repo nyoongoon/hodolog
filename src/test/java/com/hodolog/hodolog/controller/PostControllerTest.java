@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -44,6 +45,7 @@ class PostControllerTest {
 
     @Test
     @DisplayName("글 작성 요청시 title 값은 필수다.")
+    @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
     void test2() throws Exception {
         //given
         PostCreate request = PostCreate.builder()
@@ -65,7 +67,8 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청시 DB에 값이 저장된다.")
+    @DisplayName("글 작성")
+    @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
     void test3() throws Exception {
         // given
         PostCreate request = PostCreate.builder()
@@ -154,6 +157,7 @@ class PostControllerTest {
 
     @Test
     @DisplayName("글 제목 수정")
+    @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
     void test7() throws Exception {
         //given
         Post post = Post.builder()
@@ -178,6 +182,7 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 삭제")
+    @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
     void test8() throws Exception {
         //given
         Post post = Post.builder()
@@ -214,6 +219,7 @@ class PostControllerTest {
 
     @Test
     @DisplayName("존재하지 않는 게시글 수정")
+    @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
     void test10() throws Exception {
         // given
         PostEdit postEdit = PostEdit.builder()
@@ -231,7 +237,8 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("게시글 작성 시 제목에 '바보'는 포함될 수 없다 ")
+    @DisplayName("게시글 작성 시 제목에 '바보'는 포함될 수 없다 ")g //todo 이런 로직은 AOP 이용해서 처리해도 괜찮다고 언급..
+    @WithMockUser(username = "hodolman88@gmail.com", roles = {"ADMIN"})
     void test1() throws Exception {
         // given
         PostCreate request = PostCreate.builder()
