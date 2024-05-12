@@ -44,7 +44,7 @@ public class CommentService {
                 .orElseThrow(CommentNotFound::new);
 
         String encrypedPassword = comment.getPassword();
-        if(passwordEncoder.matches(request.getPassword(), encrypedPassword)){
+        if(!passwordEncoder.matches(request.getPassword(), encrypedPassword)){
             throw new InvalidPassword();
         }
         commentRepository.delete(comment);
