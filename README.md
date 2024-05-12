@@ -28,3 +28,20 @@
 - SecurityContextHolder에 인증 정보를 저장하는 구조입니다.
 
 ### Spring Security JDBC Session
+
+
+
+# 댓글 기능 Restful한 url 고민
+## RequestParam - 쿼리 파라미터
+- 어느 유형의 댓글인지 갈지 고민을 해야함 ex)블로그의 댓글 vs 쇼핑몰에 댓글 
+POST /comments?postId=1
+{
+  author: ..
+}
+
+## PathVariable
+- 대댓글을 다려면 url이 길어질 수가 있음
+POST /posts/{postId}/comments
+{
+
+}

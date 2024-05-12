@@ -2,7 +2,7 @@ package com.hodolog.hodolog.config;
 
 import com.hodolog.hodolog.domain.Post;
 import com.hodolog.hodolog.exception.PostNotFound;
-import com.hodolog.hodolog.repository.PostRepository;
+import com.hodolog.hodolog.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.PermissionEvaluator;

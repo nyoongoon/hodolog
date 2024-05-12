@@ -1,9 +1,9 @@
 package com.hodolog.hodolog.controller;
 
 import com.hodolog.hodolog.config.UserPrincipal;
-import com.hodolog.hodolog.request.PostCreate;
-import com.hodolog.hodolog.request.PostEdit;
-import com.hodolog.hodolog.request.PostSearch;
+import com.hodolog.hodolog.request.post.PostCreate;
+import com.hodolog.hodolog.request.post.PostEdit;
+import com.hodolog.hodolog.request.post.PostSearch;
 import com.hodolog.hodolog.response.PostResponse;
 import com.hodolog.hodolog.service.PostService;
 import jakarta.validation.Valid;

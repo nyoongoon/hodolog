@@ -1,4 +1,4 @@
-package com.hodolog.hodolog.request;
+package com.hodolog.hodolog.request.post;
 
 import lombok.*;
 

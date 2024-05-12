@@ -1,4 +1,4 @@
-package com.hodolog.hodolog.repository;
+package com.hodolog.hodolog.repository.post;
 
 import com.hodolog.hodolog.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
