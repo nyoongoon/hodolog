@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -116,12 +117,18 @@ public class SecurityConfig {
         filter.setRememberMeServices(rememberMeServices);
         return filter;
     }
+
     @Bean
     public AuthenticationManager authenticationManager() { //filter에 AuthenticationManager 넘겨주기 위한 Bean
+        return new ProviderManager(authenticationProvider()); //provider를 넘겨주기
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService(userRepository));
         provider.setPasswordEncoder(passwordEncoder());
-        return new ProviderManager(provider); //provider를 넘겨주기
+        return provider;
     }
 
     @Bean
