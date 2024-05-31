@@ -6,6 +6,7 @@ import com.hodolog.hodolog.config.handler.Http401Handler;
 import com.hodolog.hodolog.config.handler.Http403Handler;
 import com.hodolog.hodolog.config.handler.LoginFailHandler;
 import com.hodolog.hodolog.config.handler.LoginSuccessHandler;
+import com.hodolog.hodolog.config.jwt.JwtTokenProvider;
 import com.hodolog.hodolog.domain.User;
 import com.hodolog.hodolog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ import org.springframework.session.security.web.authentication.SpringSessionReme
 public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 시큐리티 무시 옵션 설정
@@ -102,7 +104,7 @@ public class SecurityConfig {
 
     @Bean
     public EmailPasswordAuthFilter usernamePasswordAuthenticationFilter() {
-        EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter("/auth/login", objectMapper);
+        EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter("/auth/login", objectMapper, jwtTokenProvider);
         filter.setAuthenticationManager(authenticationManager());
         // AbstractAuthenticationProcessingFilter에서 가지고 있던 것들을 커스텀
         filter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
@@ -124,7 +126,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService(userRepository));
         provider.setPasswordEncoder(passwordEncoder());
