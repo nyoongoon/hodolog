@@ -1,4 +1,8 @@
 spring:
+  config:
+    import: classpath:application-secret.yml
+#  profile:
+#    include: secret #jwt secret key
   h2:
     console:
       enabled: true
@@ -22,8 +26,8 @@ spring:
 #    init:
 #      mode: always # data.sql 실행용 -> 가입기능 만들면서 삭제
 
-hodolman:
-  jwt-kwy: "rTPmA9Sgk+Q1Xwu]bG7E6xFFUhQpdi+a151yPnRTK/Q="
+#hodolman:
+#  jwt-kwy: "rTPmA9Sgk+Q1Xwu]bG7E6xFFUhQpdi+a151yPnRTK/Q="
 
 server:
   servlet:

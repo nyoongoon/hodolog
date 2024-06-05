@@ -7,5 +7,5 @@ import lombok.NoArgsConstructor;
 @Getter
 public class EmailPassword {
     String email;
-    String passwor;
+    String password;
 }
