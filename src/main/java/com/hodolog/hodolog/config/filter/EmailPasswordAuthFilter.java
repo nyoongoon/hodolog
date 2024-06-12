@@ -2,17 +2,14 @@ package com.hodolog.hodolog.config.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hodolog.hodolog.config.jwt.JwtTokenProvider;
-import com.hodolog.hodolog.config.jwt.JwtTokenType;
 import com.hodolog.hodolog.config.jwt.TokenDto;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,22 +17,26 @@ import java.util.List;
 // json 요청 방식으로 로그인하기 위한 Filter 커스텀 구현
 // todo daoProvider 새로 만들어야할수도.. <<-- 비빌번호 검사하니까...
 
-public class EmailPasswordAuthFilter extends AbstractAuthenticationProcessingFilter {
+public class EmailPasswordAuthFilter extends UsernamePasswordAuthenticationFilter {
     private final ObjectMapper objectMapper;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public EmailPasswordAuthFilter(String loginUrl, ObjectMapper objectMapper, JwtTokenProvider jwtTokenProvider) {
-        super(loginUrl);
+    public EmailPasswordAuthFilter(ObjectMapper objectMapper, JwtTokenProvider jwtTokenProvider) {
+        super();
         this.objectMapper = objectMapper;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
     //todo jwt 검증 override
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         // todo request에 토큰으로 받는지 먼저 검증 -> 토큰 없으면 로그인 로직 -> 토큰 있으면 검증로직.. --> 분리되어야하지 않나?
-        EmailPassword emailPassword = objectMapper.readValue(request.getInputStream(), EmailPassword.class);
-
+        EmailPassword emailPassword;
+        try {
+            emailPassword = objectMapper.readValue(request.getInputStream(), EmailPassword.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         String accessToken = this.jwtTokenProvider.resolveAccessTokenByHeader(request); //헤더에 넣어주기
         String refreshToken = this.jwtTokenProvider.resolveRefreshTokenByCookie(request);

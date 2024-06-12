@@ -21,6 +21,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -77,7 +78,7 @@ public class SecurityConfig {
 //                .anyRequest().authenticated()
                 .anyRequest().permitAll()
                 .and()
-                .addFilterBefore(usernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) //json 로그인 처리 필터 삽입
+//                .addFilterBefore(usernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) //json 로그인 처리 필터 삽입
 //                    .formLogin() //json 요청 방식 로그인으로 대체
 //                    .loginPage("/auth/login") // -> http 요청 403에러 발생중 !!!
 //                    .loginProcessingUrl("/auth/login") //로그인 비즈니스 처리 post url
@@ -97,20 +98,22 @@ public class SecurityConfig {
                 // 사용자 정보 가져올 수 있는 인터페이스 사용
 //                .userDetailsService(userDetailsService()) // Bean등록하면 여기에 명시안해줘도 됨
                 .csrf(AbstractHttpConfigurer::disable) //todo crsf에 대해 찾아보기.
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
 
     //json 로그인 방식 요청을 받기위한 필터 생성
 
     @Bean
-    public EmailPasswordAuthFilter usernamePasswordAuthenticationFilter() {
-        EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter("/auth/login", objectMapper, jwtTokenProvider);
+    public UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter() {
+        EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter(objectMapper, jwtTokenProvider);
         filter.setAuthenticationManager(authenticationManager());
         // AbstractAuthenticationProcessingFilter에서 가지고 있던 것들을 커스텀
         filter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
         filter.setAuthenticationFailureHandler(new LoginFailHandler(objectMapper));
         // 실제로 인증이 완료 됐을 때 요청 내에서 인증이 유효하도록 만들어주는 컨텍스트 -> 이것이 있어야 세션 발급됨
-        filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
+//        filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
+        filter.setAllowSessionCreation(false); // 왜 세션을 주는거야....
         //remember-me
         //todo 리멤버미 쿠키에 저장 안된듯?
         SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
