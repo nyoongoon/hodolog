@@ -105,21 +105,24 @@ public class SecurityConfig {
     //json 로그인 방식 요청을 받기위한 필터 생성
 
     @Bean
-    public UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter() {
+    public EmailPasswordAuthFilter usernamePasswordAuthenticationFilter() {
         EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter(objectMapper, jwtTokenProvider);
         filter.setAuthenticationManager(authenticationManager());
         // AbstractAuthenticationProcessingFilter에서 가지고 있던 것들을 커스텀
         filter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
         filter.setAuthenticationFailureHandler(new LoginFailHandler(objectMapper));
         // 실제로 인증이 완료 됐을 때 요청 내에서 인증이 유효하도록 만들어주는 컨텍스트 -> 이것이 있어야 세션 발급됨
-//        filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
+        HttpSessionSecurityContextRepository httpSessionSecurityContextRepository = new HttpSessionSecurityContextRepository();
+        httpSessionSecurityContextRepository.setAllowSessionCreation(false);
+        filter.setSecurityContextRepository(httpSessionSecurityContextRepository);
         filter.setAllowSessionCreation(false); // 왜 세션을 주는거야....
+
         //remember-me
         //todo 리멤버미 쿠키에 저장 안된듯?
-        SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
-        rememberMeServices.setAlwaysRemember(true);
-        rememberMeServices.setValiditySeconds(3600 * 24 * 30);
-        filter.setRememberMeServices(rememberMeServices);
+//        SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
+//        rememberMeServices.setAlwaysRemember(true);
+//        rememberMeServices.setValiditySeconds(3600 * 24 * 30);
+//        filter.setRememberMeServices(rememberMeServices);
         return filter;
     }
 
