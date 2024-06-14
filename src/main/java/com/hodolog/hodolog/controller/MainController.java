@@ -16,7 +16,8 @@ public class MainController {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/user")
-    public String user(@AuthenticationPrincipal UserPrincipal userPrincipal) { // 들어올 떄 AuthenticationProviderManager가 비밀번호 삭제하여 null로 만듬
+//    public String user(@AuthenticationPrincipal UserPrincipal userPrincipal) { // 들어올 떄 AuthenticationProviderManager가 비밀번호 삭제하여 null로 만듬
+    public String user() { // 들어올 떄 AuthenticationProviderManager가 비밀번호 삭제하여 null로 만듬
         return "사용자 페이지입니다.";
     }
 

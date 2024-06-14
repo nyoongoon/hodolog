@@ -17,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -28,9 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
 
 @Slf4j
 @Configuration
@@ -68,25 +67,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests()
-//                .requestMatchers("/auth/login").permitAll()
-//                .requestMatchers("/auth/signup").permitAll()
-//                .requestMatchers("/user").hasAnyRole("USER", "ADMIN") //hasAnyRole 역할 여러개 받음
-//                .requestMatchers("/user").hasRole("USER") -> 메서드 시큐리티 적용
-//                .requestMatchers("/admin").hasRole("ADMIN") //hasRole() 에서는 ROLE_ 안붙여도 됨!
-//                .access(new WebExpressionAuthorizationManager(
-//                        "hasRole('ADMIN') AND hasAuthority('WRITE')")) //역할과 권한 동시에
-//                .anyRequest().authenticated()
                 .anyRequest().permitAll()
                 .and()
-//                .addFilterBefore(usernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) //json 로그인 처리 필터 삽입
-//                    .formLogin() //json 요청 방식 로그인으로 대체
-//                    .loginPage("/auth/login") // -> http 요청 403에러 발생중 !!!
-//                    .loginProcessingUrl("/auth/login") //로그인 비즈니스 처리 post url
-//                    .usernameParameter("username")
-//                    .passwordParameter("password")
-//                    .defaultSuccessUrl("/")
-//                    .failureHandler(new LoginFailHandler(objectMapper)) //로그인 실패 시 핸들러
-//                .and()
+                .addFilterBefore(usernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(e -> {
                     e.accessDeniedHandler(new Http403Handler(objectMapper));
                     e.authenticationEntryPoint(new Http401Handler(objectMapper)); //로그인 필요한 페이지에 로그인 없이 접근했을 로그인을 요청하게 해줌
@@ -96,33 +79,24 @@ public class SecurityConfig {
                         .tokenValiditySeconds(2592000)
                 )
                 // 사용자 정보 가져올 수 있는 인터페이스 사용
-//                .userDetailsService(userDetailsService()) // Bean등록하면 여기에 명시안해줘도 됨
                 .csrf(AbstractHttpConfigurer::disable) //todo crsf에 대해 찾아보기.
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) <<-- 여기서 시도해도 안됨!
                 .build();
     }
 
     //json 로그인 방식 요청을 받기위한 필터 생성
-
     @Bean
     public EmailPasswordAuthFilter usernamePasswordAuthenticationFilter() {
         EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter(objectMapper, jwtTokenProvider);
         filter.setAuthenticationManager(authenticationManager());
-        // AbstractAuthenticationProcessingFilter에서 가지고 있던 것들을 커스텀
         filter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
         filter.setAuthenticationFailureHandler(new LoginFailHandler(objectMapper));
         // 실제로 인증이 완료 됐을 때 요청 내에서 인증이 유효하도록 만들어주는 컨텍스트 -> 이것이 있어야 세션 발급됨
-        HttpSessionSecurityContextRepository httpSessionSecurityContextRepository = new HttpSessionSecurityContextRepository();
-        httpSessionSecurityContextRepository.setAllowSessionCreation(false);
-        filter.setSecurityContextRepository(httpSessionSecurityContextRepository);
-        filter.setAllowSessionCreation(false); // 왜 세션을 주는거야....
+//        HttpSessionSecurityContextRepository httpSessionSecurityContextRepository = new HttpSessionSecurityContextRepository();
+//        httpSessionSecurityContextRepository.setAllowSessionCreation(false);
+//        filter.setSecurityContextRepository(httpSessionSecurityContextRepository);
+//        filter.setAllowSessionCreation(false); // 왜 세션을 주는거야.... <<-- 이것은 위에거 설정 안하면 안됨
 
-        //remember-me
-        //todo 리멤버미 쿠키에 저장 안된듯?
-//        SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
-//        rememberMeServices.setAlwaysRemember(true);
-//        rememberMeServices.setValiditySeconds(3600 * 24 * 30);
-//        filter.setRememberMeServices(rememberMeServices);
         return filter;
     }
 
@@ -141,13 +115,6 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository) {
-//        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-//        UserDetails user = User.withUsername("hodolman")
-//                .password("1234")
-//                .roles("ADMIN")
-//                .build();
-//        manager.createUser(user);
-//        return manager;
         // DB로 관리하기
         return username -> {
             User user = userRepository.findByEmail(username)
