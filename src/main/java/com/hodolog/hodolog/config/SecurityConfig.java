@@ -1,7 +1,8 @@
 package com.hodolog.hodolog.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hodolog.hodolog.config.filter.EmailPasswordAuthFilter;
+import com.hodolog.hodolog.config.filter.JwtAuthenticationFilter;
+import com.hodolog.hodolog.config.filter.LoginAuthenticationFilter;
 import com.hodolog.hodolog.config.handler.Http401Handler;
 import com.hodolog.hodolog.config.handler.Http403Handler;
 import com.hodolog.hodolog.config.handler.LoginFailHandler;
@@ -17,12 +18,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +38,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final UserRepository userRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 시큐리티 무시 옵션 설정
@@ -66,50 +64,68 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                // AuthorizationFilter 등록
                 .authorizeHttpRequests()
                 .anyRequest().permitAll()
                 .and()
-                .addFilterBefore(usernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(usernamePasswordAuthenticationFilter(jwtTokenProvider(userDetailsService(userRepository))), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtRequestAuthenticationFilter(jwtTokenProvider(userDetailsService(userRepository))), LoginAuthenticationFilter.class)
                 .exceptionHandling(e -> {
                     e.accessDeniedHandler(new Http403Handler(objectMapper));
                     e.authenticationEntryPoint(new Http401Handler(objectMapper)); //로그인 필요한 페이지에 로그인 없이 접근했을 로그인을 요청하게 해줌
                 })
-                .rememberMe(rm -> rm.rememberMeParameter("remember")
-                        .alwaysRemember(false)
-                        .tokenValiditySeconds(2592000)
-                )
+//                .rememberMe(rm -> rm.rememberMeParameter("remember")
+//                        .alwaysRemember(false)
+//                        .tokenValiditySeconds(2592000)
+//                )
                 // 사용자 정보 가져올 수 있는 인터페이스 사용
                 .csrf(AbstractHttpConfigurer::disable) //todo crsf에 대해 찾아보기.
 //                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) <<-- 여기서 시도해도 안됨!
                 .build();
     }
 
-    //json 로그인 방식 요청을 받기위한 필터 생성
     @Bean
-    public EmailPasswordAuthFilter usernamePasswordAuthenticationFilter() {
-        EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter(objectMapper, jwtTokenProvider);
-        filter.setAuthenticationManager(authenticationManager());
-        filter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
-        filter.setAuthenticationFailureHandler(new LoginFailHandler(objectMapper));
-        // 실제로 인증이 완료 됐을 때 요청 내에서 인증이 유효하도록 만들어주는 컨텍스트 -> 이것이 있어야 세션 발급됨
-//        HttpSessionSecurityContextRepository httpSessionSecurityContextRepository = new HttpSessionSecurityContextRepository();
-//        httpSessionSecurityContextRepository.setAllowSessionCreation(false);
-//        filter.setSecurityContextRepository(httpSessionSecurityContextRepository);
-//        filter.setAllowSessionCreation(false); // 왜 세션을 주는거야.... <<-- 이것은 위에거 설정 안하면 안됨
+    public JwtTokenProvider jwtTokenProvider(UserDetailsService userDetailsService) {
+        return new JwtTokenProvider(userDetailsService);
+    }
 
+    @Bean
+    public JwtAuthenticationFilter jwtRequestAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtTokenProvider);
         return filter;
     }
 
+    //json 로그인 방식 요청을 받기위한 필터 생성
     @Bean
-    public AuthenticationManager authenticationManager() { //filter에 AuthenticationManager 넘겨주기 위한 Bean
-        return new ProviderManager(authenticationProvider()); //provider를 넘겨주기
+    public LoginAuthenticationFilter usernamePasswordAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+        LoginAuthenticationFilter filter = new LoginAuthenticationFilter(objectMapper, jwtTokenProvider);
+        filter.setAuthenticationManager(authenticationManager(daoAuthenticationProvider()));
+        filter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
+        filter.setAuthenticationFailureHandler(new LoginFailHandler(objectMapper));
+        // 인증이 유효하도록 만들어주는 컨텍스트 -> 이것이 있어야 세션 발급됨
+//        HttpSessionSecurityContextRepository httpSessionSecurityContextRepository = new HttpSessionSecurityContextRepository();
+//        filter.setSecurityContextRepository(httpSessionSecurityContextRepository);
+        return filter;
+    }
+
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationProvider daoAuthenticationProvider) { //filter에 AuthenticationManager 넘겨주기 위한 Bean
+        return new ProviderManager(daoAuthenticationProvider); //provider를 넘겨주기
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService(userRepository));
         provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    @Bean
+    public AuthenticationProvider jwtDaoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService(userRepository));
         return provider;
     }
 

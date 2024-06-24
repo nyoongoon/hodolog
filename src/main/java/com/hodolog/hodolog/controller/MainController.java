@@ -23,7 +23,10 @@ public class MainController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin")
-    public String admin() {
+    public String admin(
+            @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        userPrincipal.getUserId();
         return "관리자 페이지입니다.";
     }
 }

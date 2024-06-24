@@ -10,7 +10,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -21,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 
 @Slf4j
-@Component
 public class JwtTokenProvider {
     // Http 프로토콜에서 헤더에 포함 되는데, 어떤 key에 토큰을 줄건지 설정
     private static final String TOKEN_HEADER = "Authorization";
@@ -31,11 +34,18 @@ public class JwtTokenProvider {
     private static final long REFRESH_TOKEN_EXPIRED_TIME = 1000 * 60 * 60 * 24; //밀리세컨드*초*분*시 == 24시간
     private static final String KEY_ROLES = "roles";
 
+    private final UserDetailsService userDetailsService;
+
     @Value("${spring.jwt.access-secret-key}") //todo value값이 안가져와짐.
     private String accessSecretKey;
 
     @Value("${spring.jwt.refresh-secret-key}")
     private String refreshSecretKey;
+
+    public JwtTokenProvider (UserDetailsService userDetailsService){
+        this.userDetailsService = userDetailsService;
+    }
+
 
     // 토큰 발급
     public TokenDto getTokens(String userEmail, List<GrantedAuthority> roles) {
@@ -113,16 +123,25 @@ public class JwtTokenProvider {
         return this.generateToken(claims, getSecretKey(JwtTokenType.ACCESS_TOKEN), ACCESS_TOKEN_EXPIRED_TIME);
     }
 
+    /**
+     * 예시용
+     * @param token
+     * @return
+     */
+    public String getPrincipalByToken(String token) {
+        return this.parseClaims(token, JwtTokenType.ACCESS_TOKEN).getSubject();
+    }
     // 권한 얻기
 
 //
-//    public Authentication getAuthentication(String token) {
-//        String userEmail = this.parseClaims(token, this.accessSecretKey).getSubject();
-//        UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-//
-//        //스프링에서 지원해주는 형태의 토큰 -> 사용자 정보, 사용자 권한 정보
-//        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-//    }
+    public Authentication getAuthentication(String token) {
+        String userEmail = this.parseClaims(token, JwtTokenType.ACCESS_TOKEN).getSubject();
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+
+//        스프링에서 지원해주는 형태의 토큰 -> 사용자 정보, 사용자 권한 정보
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+//        return UsernamePasswordAuthenticationToken.unauthenticated(userEmail, "");
+    }
 //
 //        public Authentication getUnauthenticatedAuthentication(String token) {
 //        String userEmail = this.parseClaims(token, this.accessSecretKey).getSubject();
@@ -187,5 +206,10 @@ public class JwtTokenProvider {
         refreshTokenCookie.setHttpOnly(true); // JavaScript에서 쿠키에 접근 불가능하도록 설정
         refreshTokenCookie.setMaxAge(60 * 60 * 24 * 30); // 쿠키 유효 기간 설정 (예: 30일)
         response.addCookie(refreshTokenCookie);
+    }
+
+    public String renewalRefreshToken() {
+
+        return null;
     }
 }
