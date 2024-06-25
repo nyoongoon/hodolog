@@ -1,0 +1,1 @@
+insert into post ('title', 'content') values('제목', '내용');
