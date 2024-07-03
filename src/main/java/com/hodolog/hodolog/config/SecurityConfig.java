@@ -49,7 +49,7 @@ public class SecurityConfig {
         return web -> web.ignoring()
                 .requestMatchers("/favicon")
                 .requestMatchers("/error")
-                .requestMatchers(new AntPathRequestMatcher("/h2-console/**"));
+                .requestMatchers(new AntPathRequestMatcher("/h2-console/**"));//
     }
 
     /**
