@@ -1,80 +1,38 @@
 <script setup lang="ts">
-import axios from "axios";
-import {ref} from "vue";
-import {useRouter} from "vue-router";
+import { useRouter } from 'vue-router'
 
-const posts = ref([]);
-const router = useRouter();
-
-axios.get("/api/posts?page=1&size=5").then((response) => {
-  response.data.forEach((r: any) => {
-    posts.value.push(r);
-  })
-});
-
-const moveToRead = () => {
-  router.push({name: "read"});
-}
-
+const router = useRouter()
 </script>
 
 <template>
-  <ul>
-    <li v-for="post in posts" :key="post.id" @click="moveToRead()">
-      <div class="title">
-        <router-link :to="{name : 'read', params: {postId: post.id} }">{{
-            post.title
-          }}
-        </router-link>
-      </div>
-      <div class="content">
-        {{ post.content }}
-      </div>
-      <div class="sub d-flex">
-        <div class="category">개발</div>
-        <div class="regDate">2022-06-01</div>
-      </div>
-    </li>
-  </ul>
+  <div class="content">
+    <ul class="posts">
+      <li>
+        <Post />
+      </li>
+    </ul>
+  </div>
 </template>
+
 <style scoped lang="scss">
-ul {
+.content {
+  padding: 0 1rem 0 1rem;
+  margin-bottom: 2rem;
+}
+
+.totalCount {
+  font-size: 0.88rem;
+}
+
+.posts {
   list-style: none;
   padding: 0;
 
   li {
-    margin-bottom: 2rem;
-
-    .title {
-      a {
-        font-size: 1.1rem;
-        color: #383838;
-        text-decoration: none;
-      }
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
-    .content {
-      font-size: 0.85rem;
-      margin-top: 8px;
-      color: #6b6b6b;
-    }
+    margin-bottom: 2.4rem;
 
     &:last-child {
       margin-bottom: 0;
-    }
-
-    .sub {
-      margin-top: 8px;
-      font-size: 0.78rem;
-
-      .regDate {
-        margin-left: 10px;
-        color: #6b6b6b;
-      }
     }
   }
 }

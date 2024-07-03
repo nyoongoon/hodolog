@@ -1,86 +1,79 @@
-<script setup lang="ts">
-import {defineProps, onMounted, ref} from "vue"
-import axios from "axios";
-import {useRouter} from "vue-router";
-
-const props = defineProps({
-  postId: {
-    type: [Number, String],
-    require: true,
-  },
-});
-
-//초기화 데이터 넣기
-const post = ref({
-  id: 0,
-  title: "",
-  content: ""
-});
-
-const router = useRouter();
-
-const moveToEdit = () => {
-  router.push({name: "edit", params: {postId: props.postId}});
-};
-
-onMounted(() => {
-  axios.get(`/api/posts/${props.postId}`).then((response) => {
-    post.value = response.data;
-  });
-});
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <el-row>
-    <el-col>
-      <div>
-        <h2 class="title">{{ post.title }}</h2>
-        <div class="sub d-flex">
-          <div class="category">개발</div>
-          <div class="regDate">2022-06-01 23:59:59</div>
-        </div>
+    <el-col :span="22" :offset="1">
+      <div class="title"></div>
+    </el-col>
+  </el-row>
+
+  <el-row>
+    <el-col :span="10" :offset="7">
+      <div class="title">
+        <div class="regDate"></div>
       </div>
     </el-col>
   </el-row>
 
-  <el-row class="mt-3">
+  <el-row>
     <el-col>
-      <div class="d-flex">
-        <div class="content">{{ post.content }}</div>
+      <div class="content"></div>
+
+      <div class="footer">
+        <div class="edit">수정</div>
+        <div class="delete">삭제</div>
       </div>
     </el-col>
   </el-row>
 
-  <el-row class="mt-3">
+  <el-row class="comments">
     <el-col>
-      <div class="d-flex justify-content-end">
-        <el-button type="warning" @click="moveToEdit()">수정</el-button>
-      </div>
+      <Comments />
     </el-col>
   </el-row>
 </template>
 
-<style scoped>
-  .title{
-    font-size: 1.6rem;
-    font-weight: 600;
-    color: #383838;
-    margin: 0;
-  }
-  .sub {
-    margin-top: 10px;
-    font-size: 0.78rem;
+<style scoped lang="scss">
+.title {
+  font-size: 1.8rem;
+  font-weight: 400;
+  text-align: center;
+}
 
-    .regDate {
-      margin-left: 10px;
-      color: #6b6b6b;
-    }
+.regDate {
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 300;
+}
+
+.content {
+  margin-top: 1.88rem;
+  font-weight: 300;
+
+  word-break: break-all;
+  white-space: break-spaces;
+  line-height: 1.4;
+  min-height: 5rem;
+}
+
+hr {
+  border-color: #f9f9f9;
+  margin: 1.2rem 0;
+}
+
+.footer {
+  margin-top: 1rem;
+  display: flex;
+  font-size: 0.78rem;
+  justify-content: flex-end;
+  gap: 0.8rem;
+
+  .delete {
+    color: red;
   }
-  .content{
-    font-size: 0.95rem;
-    margin-top: 12px;
-    color: #7e7e7e;
-    white-space: break-spaces;
-    line-height: 1.5;
-  }
+}
+
+.comments {
+  margin-top: 4.8rem;
+}
 </style>

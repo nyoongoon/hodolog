@@ -1,18 +1,29 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
-  <el-header class="p-0">
-    <el-menu mode="horizontal" :router="true">
-      <el-menu-item index="/">Home</el-menu-item>
-      <el-menu-item index="/write">글 작성</el-menu-item>
-    </el-menu>
-  </el-header>
+  <div class="header">
+    <!--    <img src="/images/logo.png" alt="logo" class="logo" />-->
+    <div class="title">호돌맨 블로그</div>
+  </div>
 </template>
 
-<style scoped>
-body {
-  magin: 0;
+<script setup lang="ts"></script>
+
+<style scoped lang="scss">
+.header {
+  height: 60px;
+  margin: 1rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  width: 52px;
+  object-fit: cover;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 300;
+  margin-left: 5px;
 }
 </style>
