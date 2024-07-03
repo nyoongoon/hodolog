@@ -9,11 +9,13 @@ import com.hodolog.hodolog.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -39,6 +41,7 @@ public class PostController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/posts")
+//    public void post(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody @Valid PostCreate request) throws Exception {
     public void post(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody @Valid PostCreate request) throws Exception {
         // 리턴값 내려주는 경우
         // Case1. 저장한 데이터 Entity -> response로 응답하기
@@ -56,18 +59,22 @@ public class PostController {
         postService.write(userPrincipal.getUserId(), request);
     }
 
-    @GetMapping("/posts/{postId}")
+    @GetMapping("/post/{postId}")
     public PostResponse get(@PathVariable Long postId) {
         // 요청 클래스 -> 요청 + 밸리데이션 정책
         // 응답 클래스 -> 응답 + 서비스 정책 일부
-        return postService.get(postId);
+        throw new IllegalArgumentException("메시지");
+//        return postService.get(postId);
     }
+        // querydsl을 이용하여 페이징 처리하기...
 
-    @GetMapping("/posts") // querydsl을 이용하여 페이징 처리하기...
+
+
+    @GetMapping("/posts")
     //@ModalAttribute -> 쿼리파라미터로 던저도 dto로 받는다.
     public List<PostResponse> getList(@ModelAttribute PostSearch pageable) {
-
-        return postService.getList(pageable);
+        throw new IllegalArgumentException("메시지");
+//        return postService.getList(pageable);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

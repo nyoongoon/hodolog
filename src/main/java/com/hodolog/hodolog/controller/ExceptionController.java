@@ -57,8 +57,22 @@ public class ExceptionController {
     }
 
     @ResponseBody
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> clientException(Exception e) {
+        log.error("예외발생", e);
+
+        ErrorResponse body = ErrorResponse.builder()
+                .code("400")
+                .message(e.getMessage())
+                .build();
+
+        return ResponseEntity.badRequest().body(body);
+    }
+
+    @ResponseBody
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> exception(Exception e){
+//    public ResponseEntity<ErrorResponse> exception(Exception e){
+    public ErrorResponse exception(Exception e) {
         log.error("예외발생", e);
 
         ErrorResponse body = ErrorResponse.builder()
@@ -70,6 +84,6 @@ public class ExceptionController {
         ResponseEntity<ErrorResponse> response = ResponseEntity.status(500)
                 .body(body);
 
-        return response;
+        return body;
     }
 }

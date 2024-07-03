@@ -68,8 +68,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .anyRequest().permitAll()
                 .and()
-                .addFilterBefore(usernamePasswordAuthenticationFilter(jwtTokenProvider(userDetailsService(userRepository))), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtRequestAuthenticationFilter(jwtTokenProvider(userDetailsService(userRepository))), LoginAuthenticationFilter.class)
+//                .addFilterBefore(usernamePasswordAuthenticationFilter(jwtTokenProvider(userDetailsService(userRepository))), UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(jwtRequestAuthenticationFilter(jwtTokenProvider(userDetailsService(userRepository))), LoginAuthenticationFilter.class)
                 .exceptionHandling(e -> {
                     e.accessDeniedHandler(new Http403Handler(objectMapper));
                     e.authenticationEntryPoint(new Http401Handler(objectMapper)); //로그인 필요한 페이지에 로그인 없이 접근했을 로그인을 요청하게 해줌

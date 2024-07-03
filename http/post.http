@@ -3,6 +3,13 @@
 #Content-Type: application/json
 #Authorization: asdf
 
+### 게시글 조회
+GET http://localhost:8080/posts?page=1&size=20
+
+### 에러 예시
+GET http://localhost:8080/post/123
+
+
 ### 게시글 작성
 POST http://localhost:8080/posts
 Content-Type: application/json
